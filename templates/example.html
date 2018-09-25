@@ -2,7 +2,8 @@
 
 {% block top %}  
 <div class="text-center">
-	 <h1>{{title}}</h1>
+	 <h1> Training Phase: Don't worry about it if you cannot get everything correct.</h1>
+	 <h2>{{title}}</h2>
 	 <h3>{{action}}</h1>
 </div>
 {% endblock %}
@@ -51,16 +52,17 @@
 $(document).ready(function () {
 	$("#show" ).click( function(){
 		$("#sol").empty().append(
-			" <b>Solution for Question 1</b> <br>"+
-			"{{ans1}}" + "<br>" + 
-			" <b>Solution for Question</b> 2 <br>"+
-			"{{ans2}}" + "<br>"
-			+
-		"<form action='/example', method = 'POST'>"+
-		"<INPUT TYPE='hidden' NAME='next_i' VALUE={{next_i}}>"+
-		"<INPUT TYPE='hidden' NAME='next_j' VALUE={{next_j}}>"+
-		"<input type='submit' value='next question'>"+
-		"</form>"
+			`
+			 <b>Solution for Question 1</b> <br>
+			{{ans1}} <br>
+			 <b>Solution for Question</b> 2 <br>
+			{{ans2}} <br>
+			<form action='/example', method = 'POST'>
+			<INPUT TYPE='hidden' NAME='next_i' VALUE={{next_i}}>
+			<INPUT TYPE='hidden' NAME='next_j' VALUE={{next_j}}>
+			<input type='submit' value='next question'>
+			</form>
+			`
 	)});
 });
 </script>
