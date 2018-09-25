@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+	<title></title>
+
+	<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+<!-- jQuery library -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+<!-- Latest compiled JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  {% block script %} 
+
+ {% endblock %}
+</head>
+<body>
+<div class="container-fluid">
+  <div class="row">
+
+  	{% block top %}  {% endblock %}
+  		
+  </div>
+
+  <div class="row">
+  	<div class = 'col-sm-6'> {% block left %}  {% endblock %} </div>
+  	<div class = 'col-sm-6'> {% block right %}  {% endblock %} </div>
+  </div>
+
+    <div class="row">
+
+  		{% block bot %}  {% endblock %}
+  		
+  	</div>
+</div>
+
+</body>
+
+
+</html>

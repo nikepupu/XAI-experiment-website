@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block top %}  
+<div class="text-center">
+	 <h1>{{title}}</h1>
+	 <h3>{{action}}</h1>
+</div>
+{% endblock %}
+
+{% block left %} 
+<div class="text-center">
+	<figure>
+		<img src="static/img/{{img}}"  height="200" width="200"/>
+		<figcaption>{{imgtitle}}</figcaption>
+	</figure>
+
+
+<h3> Explanation: </h3>
+<h4>State (vision module output):</h4>
+ {{exp1}}
+
+<h4>Task plan (planning module output): </h4>
+ {{exp2}}
+</div>
+
+{% endblock %}
+
+{% block right %}
+
+<STRONG>Question 1</STRONG>: Do you think the robot's vision module is working fine?
+<INPUT TYPE="radio" NAME="q1" VALUE="y",autocomplete="off">Yes
+<INPUT TYPE="radio" NAME="q1" VALUE="n",autocomplete="off">No
+<br>
+
+<STRONG>Question 2</STRONG>: Do you think the robot's task plan is right?
+<INPUT TYPE="radio" NAME="q2" VALUE="y",autocomplete="off">Yes
+<INPUT TYPE="radio" NAME="q2" VALUE="n",autocomplete="off">No
+<br>
+
+  	<button id = "show">Show Solution</button>
+ 
+
+<p id = "sol"> </p>
+
+<div id= "error"> </div>
+
+{% endblock %} 
+
+{% block script %}
+<script>
+$(document).ready(function () {
+	$("#show" ).click( function(){
+		$("#sol").empty().append(
+			" <b>Solution for Question 1</b> <br>"+
+			"{{ans1}}" + "<br>" + 
+			" <b>Solution for Question</b> 2 <br>"+
+			"{{ans2}}" + "<br>"
+			+
+		"<form action='/example', method = 'POST'>"+
+		"<INPUT TYPE='hidden' NAME='next_i' VALUE={{next_i}}>"+
+		"<INPUT TYPE='hidden' NAME='next_j' VALUE={{next_j}}>"+
+		"<input type='submit' value='next question'>"+
+		"</form>"
+	)});
+});
+</script>
+
+{% endblock %} 

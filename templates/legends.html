@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block top %} 
+
+{% for item in images %}
+<div class="text-center">
+	<figure>
+		<img src="static/img/{{item}}"  height="200" width="200"/>
+		<figcaption>{{item}}</figcaption>
+	</figure>
+</div>
+<br>
+<br>
+{% endfor %}
+
+{% endblock %}
+
+
+{% block bot %}
+<div class="col-md-2 col-md-offset-5">
+	<form action="/example">
+ 		<input type="submit" value="I understand the meaning of each picture and want to start the trial">
+	</form>
+</div>
+
+{% endblock %}
