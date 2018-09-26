@@ -1,11 +1,35 @@
 {% extends "base.html" %}
-{% block top %} 
 
-{% for item in images %}
+{% block top %}
+<div class="text-center">
+	<h2> legneds </h2>
+	<p> Please pay <b>ATTENTION </b> to the difference between <b>left</b> and <b>right</b> </p>
+</div>
+{% endblock %}
+
+{% block left %} 
+
+{% for item, cap in images1|zip(cap1) %}
 <div class="text-center">
 	<figure>
 		<img src="static/img/{{item}}"  height="200" width="200"/>
-		<figcaption>{{item}}</figcaption>
+		<figcaption>{{cap}}</figcaption>
+	</figure>
+</div>
+<br>
+<br>
+{% endfor %}
+
+{% endblock %}
+
+
+{% block right %} 
+
+{% for item, cap in images2|zip(cap2) %}
+<div class="text-center">
+	<figure>
+		<img src="static/img/{{item}}"  height="200" width="200"/>
+		<figcaption>{{cap}}</figcaption>
 	</figure>
 </div>
 <br>

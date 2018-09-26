@@ -11,6 +11,7 @@ import matplotlib.image as mpimg
 from robot import robot
 
 app = Flask(__name__, static_url_path='/static')
+app.jinja_env.filters['zip'] = zip
 
 def getListOfFiles(dirName):
     # create a list of file and sub directories 
@@ -385,7 +386,18 @@ def index():
 def legends():
 	img = getListOfFiles('static/img')
 	sorted(img)
-	return render_template("legends.html", images = img)
+	img1 = ["cup_next_to_juicer.png", "cup_not_under_maker.png","hand_carrot.png","hand_apple.png", "hand_cup.png","maker_on.png", 
+	"not_on_stove.png","on_stove.png", "open_stove.png","push_pour_button_off.png"]
+	cap1 = ["cup next to juicer","cup next to coffee maker", "carrot in hand","apple in hand","cup in hand","coffee maker on",
+	"pan next to stove", "pan on stove", "hand near stove switch", "coffee maker off, cup under coffee maker"]
+
+
+	img2 = ["cup_under_juicer.png", "cup_under_maker.png","hand_lemon.png", "hand_orange.png","hand_plate.png","maker_off.png",
+	"not_on_stove2.png","stove_oven.png","open_oven.png","push_pour_button_on.png"]
+	cap2 = ["cup in front of juicer", "cup under coffee maker", "lemon in hand", "orange in hand", "plate in hand", "coffee maker off",
+	"pan next to stove", "picture of stove and oven","hand near oven switch", "coffee maker on, cup under coffee maker"]
+
+	return render_template("legends.html", images1 = img1, images2 = img2, cap1 = cap1, cap2 = cap2)
 
 
 
