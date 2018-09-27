@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+
+{% block top %}  
+<div class="text-center">
+
+	
+	 <h1 > Testing Phase: Please pay close attention</h1>
+	 <h2>{{title}}</h2>
+	 <h3>{{action}}</h1>
+	 <p>As two separate modules, you know that they go wrong at a different, unknown probability and the probability does not change.
+	 	<br><b>which means one module went worng does not lead to errors in other modules </b></p>
+</div>
+{% endblock %}
+
+{% block left %} 
+<div class="text-center">
+	<figure>
+		<img src="static/img/{{img}}"  height="200" width="200"/>
+		<figcaption>{{imgtitle}}</figcaption>
+	</figure>
+
+
+<h3> Explanation: </h3>
+<h4>State (vision module output):</h4>
+ {{exp1}}
+
+<h4>Task plan (planning module output): </h4>
+ {{exp2}}
+</div>
+
+{% endblock %}
+
+{% block right %}
+<form action = "/test", method="POST", id = "questions">
+<STRONG>Question 1</STRONG>: Do you think the robot's vision module is working fine?
+<INPUT TYPE="radio" NAME="q1" VALUE="y",autocomplete="off", id="yes">Yes
+<INPUT TYPE="radio" NAME="q1" VALUE="n",autocomplete="off", id="no">No
+<br>
+
+<STRONG>Question 2</STRONG>: Do you think the robot's task plan is right?
+<INPUT TYPE="radio" NAME="q2" VALUE="y",autocomplete="off", id="yes">Yes
+<INPUT TYPE="radio" NAME="q2" VALUE="n",autocomplete="off", id="no">No
+<br>
+
+  	<button id = "show">next question</button>
+ 	
+</form>
+<p id = "sol"> </p>
+
+<div id= "error"> </div>
+
+{% endblock %} 
+
+{% block script %}
+<script>
+$(document).ready(function () {
+	
+	$("#show" ).click( function(event){
+
+			var $inputs = $('input[name=q1] :checked').value;
+			console.log("hello");
+	
+			var flag = 0;
+    		if(($inputs[0]).value == "" && ($inputs[1]).value == "")
+    			flag = 1
+    		if(($inputs[2]).value == "" && ($inputs[3]).value == "")
+    			flag = 1
+    		event.preventDefault();
+    		flag = 1;
+    		if(flag == 1)
+    		{
+    			$("#error").empty().append("Please complete the form before submit"); 
+    			event.preventDefault();
+    		}
+    		else
+    		{
+    			//$("#questions").submit();
+    		}
+
+
+		
+	});
+
+
+
+});
+</script>
+
+{% endblock %} 

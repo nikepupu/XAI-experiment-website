@@ -7,11 +7,15 @@ import time
 import matplotlib
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
+from pymongo import MongoClient
+
 
 from robot import robot
 
 app = Flask(__name__, static_url_path='/static')
 app.jinja_env.filters['zip'] = zip
+
+
 
 def getListOfFiles(dirName):
     # create a list of file and sub directories 
@@ -104,19 +108,10 @@ def training_phase(j, i):
 			return title, action, exp1 , exp2, img , imgtitle,ans1, ans2
 
 
-def user_study():
+def user_study(j, t,sub_task_idx, r1):
 
 	task_length = 6
 	episode_num = 5
-
-	# f = open("result.txt", "w")
-	r1 = robot(T=task_length*episode_num)
-	prior_list_obs = []
-	prior_list_dec = []
-	acc_obs = []
-	acc_dec = []
-	u_obs = []
-	u_dec = []
 
 	instructions = ["action: grab carrot", "action: place pan on stove", "action: turn on the stove",\
 		"action: grab cup", "action: place cup under coffee maker", "action: push brew button and get coffee"]
@@ -217,142 +212,69 @@ def user_study():
 	]
 
 	img_names = [
-		{True: 'images/hand_orange.PNG', False: 'images/hand_carrot.PNG'},
-		{True: 'images/not_on_stove2.PNG', False: 'images/on_stove.PNG'},
-		{True: 'images/open_oven.PNG', False: 'images/open_stove.PNG'},
-		{True: 'images/hand_plate.PNG', False: 'images/hand_cup.PNG'},
-		{True: 'images/cup_not_under_maker.PNG', False: 'images/cup_under_maker.PNG'},
-		{True: 'images/push_pour_button_off.PNG', False: 'images/push_pour_button_on.PNG'}
+		{True: 'hand_orange.png', False: 'hand_carrot.png'},
+		{True: 'not_on_stove2.png', False: 'on_stove.png'},
+		{True: 'open_oven.png', False: 'open_stove.png'},
+		{True: 'hand_plate.png', False: 'hand_cup.png'},
+		{True: 'cup_not_under_maker.png', False: 'cup_under_maker.png'},
+		{True: 'push_pour_button_off.png', False: 'push_pour_button_on.png'}
 		]
-
-	img_instructions = ["images/maker_off.png", "images/maker_on.png"]
-	img0 = mpimg.imread(img_instructions[0])
-	img1 = mpimg.imread(img_instructions[1])
-	f, axarr = plt.subplots(1,2)
-	axarr[0].imshow(img0)
-	axarr[0].set_title("coffee maker off")
-	axarr[1].imshow(img1)
-	axarr[1].set_title("coffee maker on")
-	plt.show(block=False)
-	raw_input("Showing states of a coffee maker. Press any button to continue.\n")
-	plt.close('all')
-
-	# img = mpimg.imread('images/hand_carrot.PNG')
-	# plt.imshow(img)
-	# plt.show(block=False)
-	# time.sleep(2.0)
-	# plt.close('all')
+ 
 
 	sub_task_length = [3,6]
 	task_name = ["cook carrot", "get coffee"]
-	num_exp = []
+	
 
 
-	for j in range(episode_num):
-		acc_count_obs = 0
-		acc_count_dec = 0
-		u_count_obs = 0
-		u_count_dec = 0
-		sub_task_idx = 0
-		for t in range(task_length):
-			if t < sub_task_length[sub_task_idx]:
-				print "Task: "+ task_name[sub_task_idx]
-			else:
-				sub_task_idx += 1
-				print "Task: "+ task_name[sub_task_idx] 
 
-			a = r1.sample_action()
-			expl = r1.generate_exp()
+	if t < sub_task_length[sub_task_idx]:
+		title = "Task: "+ task_name[sub_task_idx]
+	else:
+		sub_task_idx += 1
+		title = "Task: "+ task_name[sub_task_idx] 
 
-			ErrFlag = False
-			for key in a:
-				if key == True:
-					ErrFlag = True
-					break
+	a = r1.sample_action()
+	expl = r1.generate_exp()
 
-			ObsFlag = False
-			DecFlag = False
-			if "obs" in expl.expl_form:
-				ObsFlag = True
-			if "dec" in expl.expl_form:
-				DecFlag = True
+	ErrFlag = False
+	for key in a:
+		if key == True:
+			ErrFlag = True
+			break
 
-			ObsExp = ""
-			DecExp = ""
-			if ObsFlag:
-				ObsExp += explanations[t][ErrFlag]["obs"][a[0]]
-			else:
-				ObsExp = "No explanation"
-			if DecFlag:
-				DecExp += explanations[t][ErrFlag]["dec"][a[1]]
-			else:
-				DecExp = "No explanation"
+	ObsFlag = False
+	DecFlag = False
+	if "obs" in expl.expl_form:
+		ObsFlag = True
+	if "dec" in expl.expl_form:
+		DecFlag = True
 
-			print instructions[t]
-			print "Explanations: "
-			print " State: "
-			print "  "+ ObsExp
-			print " Task plan: "
-			print "  " + DecExp
+	ObsExp = ""
+	DecExp = ""
+	if ObsFlag:
+		ObsExp += explanations[t][ErrFlag]["obs"][a[0]]
+	else:
+		ObsExp = "No explanation"
+	if DecFlag:
+		DecExp += explanations[t][ErrFlag]["dec"][a[1]]
+	else:
+		DecExp = "No explanation"
 
-			resp = []
+	action =  instructions[t]
+	exp1 = "  " + ObsExp
+	exp2 = "  " + DecExp
 
-			img = mpimg.imread(img_names[t][ErrFlag])
-			plt.imshow(img)
-			plt.title("Snapshot from robot's camera after the action")
-			plt.show(block=False)
-			res1 = raw_input("\n Do you think the robot's vision module is working fine (y/n)? ")
-			res2 = raw_input("Do you think the robot's task plan is right (y/n)? ")
-			plt.close('all')
+	resp = []
 
-			if "n" in res1:
-				resp.append("obs")
-			else:
-				resp.append("ok")
+	img = img_names[t][ErrFlag]
+	imgtitle =  "Snapshot from robot's camera after the action"
 
-			if "n" in res2:
-				resp.append("dec")
-			else:
-				resp.append("ok")
+	return title, action, exp1 , exp2, img , imgtitle, sub_task_idx,a
 
-			if a[0] == True and resp[0] == "obs":
-				acc_count_obs += 1
-			elif a[0] == False and resp[0] == "ok":
-				acc_count_obs += 1
 
-			if a[1] == True and resp[1] == "dec":
-				acc_count_dec += 1
-			elif a[1] == False and resp[1] == "ok":
-				acc_count_dec += 1
+#################################################
 
-			if resp[0] == "obs":
-				u_count_obs += 1
-
-			if resp[1] == "dec":
-				u_count_dec += 1
-
-			print "\n"
-			print "\n"
-
-			r1.update_mem(resp)
-
-			prior = r1.update_prior()
-
-		num_exp.append(r1.exp_num*1.0/(task_length))
-		r1.exp_num = 0
-
-		# average prediction result
-		u_obs.append(1.0*u_count_obs/task_length)
-		u_dec.append(1.0*u_count_dec/task_length)
-
-		# human prediction accuracy
-		acc_obs.append(1.0*acc_count_obs/task_length)
-		acc_dec.append(1.0*acc_count_dec/task_length)
-
-		# machine prior
-		prior_list_obs.append(prior[0]["obs"])
-		prior_list_dec.append(prior[1]["dec"])
-
+"""
 	print "Please send back the following data and three figures (with title \"robot prior\", \"user prediction accuracy\" and \"user prediction result\")."
 	print "avg_prior_obs", prior_list_obs, "avg_prior_dec", prior_list_dec
 	print "prediction_obs", np.mean(u_obs), "prediction_dec", np.mean(u_dec)
@@ -376,7 +298,7 @@ def user_study():
 	plt.plot(u_dec)
 	plt.legend(["obs", "dec"])
 	plt.show()
-
+"""
 
 @app.route('/')
 def index():
@@ -401,13 +323,10 @@ def legends():
 
 
 
-@app.route('/example',  methods=['GET', 'POST'])
+@app.route('/example',  methods=['POST', 'GET'])
 def example():
 	form = request.form
-	if 'q1' in form:
-		q1 = form['q1']
-	if 'q2' in form:
-		q2 = form['q2']
+
 	if 'next_i' in form and 'next_j' in form:
 		next_j = form["next_j"]
 		next_i = form["next_i"]
@@ -419,10 +338,116 @@ def example():
 	next_i = str( (int(next_i)+1)%4 )
 	if int(next_j) < 2:
 		return render_template("example.html", title = title, action = action, exp1 = exp1 , exp2 = exp2, img = img , imgtitle = imgtitle
-		, ans1 = ans1, ans2 = ans2,next_i = next_i, next_j = next_j)
+		, ans1 = ans1, ans2 = ans2,next_i = next_i, next_j = next_j, train=True)
 	else:
 		return render_template("attention.html")
 
+
+@app.route('/test',  methods=['POST', 'GET'])
+def test():
+	task_length = 6
+	episode_num = 5
+
+	form = request.form
+	if 'q1' in form:
+		q1 = form['q1']
+	else:
+		q1 = "err"
+
+	if 'q2' in form:
+		q2 = form['q2']
+	else:
+		q2 = "err"
+
+	print q1
+	print q2
+	if 'next_i' in form and 'next_j' in form:
+		next_j = form["next_j"]
+		next_i = form["next_i"]
+	else:
+		next_i = "0"
+		next_j = "0"
+		acc_count_obs = 0
+		acc_count_dec = 0
+		u_count_obs = 0
+		u_count_dec = 0
+		sub_task_idx = 0
+		r1 = robot(T=task_length*episode_num)
+		prior_list_obs = []
+		prior_list_dec = []
+		acc_obs = []
+		acc_dec = []
+		u_obs = []
+		u_dec = []
+		num_exp = []
+
+
+	resp = []
+	title, action, exp1 , exp2, img , imgtitle, sub_task_idx, a = user_study(int(next_j), int(next_i),sub_task_idx, r1)
+
+	if "n" in q1:
+		resp.append("obs")
+	else:
+		resp.append("ok")
+
+	if "n" in q2:
+		resp.append("dec")
+	else:
+		resp.append("ok")
+
+	if a[0] == True and resp[0] == "obs":
+		acc_count_obs += 1
+	elif a[0] == False and resp[0] == "ok":
+		acc_count_obs += 1
+
+	if a[1] == True and resp[1] == "dec":
+		acc_count_dec += 1
+	elif a[1] == False and resp[1] == "ok":
+		acc_count_dec += 1
+
+	if resp[0] == "obs":
+		u_count_obs += 1
+
+	if resp[1] == "dec":
+		u_count_dec += 1
+
+
+	####
+	r1.update_mem(resp)
+
+	prior = r1.update_prior()
+
+	old_j = next_j
+	next_j = str(int(next_j) +  (int(next_i) + 1)/task_length)
+	next_i = str( (int(next_i)+1)%task_length )
+
+	if old_j != next_j:
+		num_exp.append(r1.exp_num*1.0/(task_length))
+		r1.exp_num = 0
+
+		# average prediction result
+		u_obs.append(1.0*u_count_obs/task_length)
+		u_dec.append(1.0*u_count_dec/task_length)
+
+		# human prediction accuracy
+		acc_obs.append(1.0*acc_count_obs/task_length)
+		acc_dec.append(1.0*acc_count_dec/task_length)
+
+		# machine prior
+		prior_list_obs.append(prior[0]["obs"])
+		prior_list_dec.append(prior[1]["dec"])
+
+		acc_count_obs = 0
+		acc_count_dec = 0
+		u_count_obs = 0
+		u_count_dec = 0
+		sub_task_idx = 0
+
+	if int(next_j) < episode_num:
+		return render_template("example.html", title = title, action = action, exp1 = exp1 , exp2 = exp2, img = img , imgtitle = imgtitle,
+		next_i = next_i, next_j = next_j, train = False)
+	else:
+		return render_template("attention.html")
 
 if __name__ == '__main__':
     app.run(debug = True)
