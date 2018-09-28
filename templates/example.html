@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% block id %} {{id}} {% endblock %}
 
 {% block top %}  
 <div class="text-center">
@@ -45,6 +46,9 @@
 <INPUT TYPE="radio" NAME="q2" VALUE="y">Yes
 <INPUT TYPE="radio" NAME="q2" VALUE="n">No
 <br>
+<INPUT TYPE='hidden' NAME='next_i' VALUE={{next_i}}>
+<INPUT TYPE='hidden' NAME='next_j' VALUE={{next_j}}>
+<INPUT TYPE='hidden' NAME='idnum' VALUE={{idnum}}>
 	{% if  train %}
   	<button id = "show">Show Solution</button>
   	{% else %}
@@ -78,6 +82,7 @@ $(document).ready(function () {
 			<form action='/example', method = 'POST'>
 			<INPUT TYPE='hidden' NAME='next_i' VALUE={{next_i}}>
 			<INPUT TYPE='hidden' NAME='next_j' VALUE={{next_j}}>
+			<INPUT TYPE='hidden' NAME='idnum' VALUE={{idnum}}>
 			<input type='submit' value='next question'>
 			</form>
 			`)
@@ -96,6 +101,12 @@ $(document).ready(function () {
 
 		}
 	});
+
+
+	if("{{train}}" == "False")
+	{
+		
+	}
 
 });
 </script>

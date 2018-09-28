@@ -1,6 +1,6 @@
 
 {% extends "base.html" %}
-
+{% block id %} {{id}} {% endblock %}
 {% block top %}
 <div class="text-center">
  <h2> Please Pay <b>CLOSE</b> attention to these 2 different photos </h2>
@@ -28,6 +28,7 @@
 
 {% block bot %}
 			<form action='/test', method = 'POST'>
+			<INPUT TYPE='hidden' NAME='idnum' VALUE={{idnum}}>
 			<input type='submit' value='start the testing phase'>
 			</form>
 {% endblock %}

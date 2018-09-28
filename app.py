@@ -1,4 +1,4 @@
-from flask import Flask,render_template,request
+from flask import Flask,render_template,request, make_response
 import os
 import numpy as np
 import random
@@ -8,13 +8,19 @@ import matplotlib
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 from pymongo import MongoClient
-
+import uuid
+import json
 
 from robot import robot
 
 app = Flask(__name__, static_url_path='/static')
 app.jinja_env.filters['zip'] = zip
 
+bots = set()
+
+client = MongoClient()
+db = client.XAI
+doc = db['userProgress']
 
 
 def getListOfFiles(dirName):
@@ -226,12 +232,13 @@ def user_study(j, t,sub_task_idx, r1):
 	
 
 
-
-	if t < sub_task_length[sub_task_idx]:
-		title = "Task: "+ task_name[sub_task_idx]
+	print t
+	print sub_task_idx
+	if t < 3:
+		title = "Task: "+ task_name[0]
 	else:
-		sub_task_idx += 1
-		title = "Task: "+ task_name[sub_task_idx] 
+		#sub_task_idx += 1
+		title = "Task: "+ task_name[1] 
 
 	a = r1.sample_action()
 	expl = r1.generate_exp()
@@ -300,14 +307,37 @@ def user_study(j, t,sub_task_idx, r1):
 	plt.show()
 """
 
-@app.route('/')
+@app.route('/',methods=['GET', 'POST'])
 def index():
-    return render_template("intro.html")
-
-@app.route('/start')
+    idnum = "1"#str(uuid.uuid4())
+    cursor = doc.find({idnum: {"$exists": True}}).limit(1)
+    if cursor.count() == 0:
+		key = {"user_id_xai":idnum}
+		data = {
+		"user_id_xai":idnum,
+		"last page": "", 
+    	"acc_count_obs":"", 
+    	"acc_count_dec":"", 
+    	"u_count_obs":"", 
+    	"u_count_dec":"", 
+    	"sub_task_idx":"", 
+    	"r1":"", 
+    	"prior_list_obs":"",
+    	"prior_list_dec":"",
+    	"acc_obs":"",
+    	"acc_dec":"",
+    	"u_obs":"",
+    	"u_dec":"",
+    	"num_exp":""}
+		doc.update(key, data, upsert=True)
+	
+    return render_template("intro.html",idnum = idnum)
+    
+@app.route('/start',methods=['POST', 'GET'])
 def legends():
-	img = getListOfFiles('static/img')
-	sorted(img)
+	form = request.form
+	
+	idnum = form["idnum"]
 	img1 = ["cup_next_to_juicer.png", "cup_not_under_maker.png","hand_carrot.png","hand_apple.png", "hand_cup.png","maker_on.png", 
 	"not_on_stove.png","on_stove.png", "open_stove.png","push_pour_button_off.png"]
 	cap1 = ["cup next to juicer","cup next to coffee maker", "carrot in hand","apple in hand","cup in hand","coffee maker on",
@@ -319,14 +349,14 @@ def legends():
 	cap2 = ["cup in front of juicer", "cup under coffee maker", "lemon in hand", "orange in hand", "plate in hand", "coffee maker off",
 	"pan next to stove", "picture of stove and oven","hand near oven switch", "coffee maker on, cup under coffee maker"]
 
-	return render_template("legends.html", images1 = img1, images2 = img2, cap1 = cap1, cap2 = cap2)
+	return render_template("legends.html", images1 = img1, images2 = img2, cap1 = cap1, cap2 = cap2, idnum = idnum)
 
 
 
 @app.route('/example',  methods=['POST', 'GET'])
 def example():
 	form = request.form
-
+	idnum = form["idnum"]
 	if 'next_i' in form and 'next_j' in form:
 		next_j = form["next_j"]
 		next_i = form["next_i"]
@@ -338,17 +368,20 @@ def example():
 	next_i = str( (int(next_i)+1)%4 )
 	if int(next_j) < 2:
 		return render_template("example.html", title = title, action = action, exp1 = exp1 , exp2 = exp2, img = img , imgtitle = imgtitle
-		, ans1 = ans1, ans2 = ans2,next_i = next_i, next_j = next_j, train=True)
+		, ans1 = ans1, ans2 = ans2,next_i = next_i, next_j = next_j, train=True, idnum = idnum)
 	else:
-		return render_template("attention.html")
+		return render_template("attention.html", idnum = idnum)
 
 
 @app.route('/test',  methods=['POST', 'GET'])
 def test():
+	global bots
 	task_length = 6
 	episode_num = 5
 
 	form = request.form
+	idnum = form["idnum"]
+	
 	if 'q1' in form:
 		q1 = form['q1']
 	else:
@@ -359,12 +392,28 @@ def test():
 	else:
 		q2 = "err"
 
-	print q1
-	print q2
+	
 	if 'next_i' in form and 'next_j' in form:
 		next_j = form["next_j"]
 		next_i = form["next_i"]
+		r1 = [item for item in bots if item[0] == idnum ][0][1]
+		query = {"user_id_xai":idnum}
+		res = doc.find_one(query)
+		acc_count_obs = int(res["acc_count_obs"])
+		acc_count_dec = int(res["acc_count_dec"])
+		u_count_obs = int(res["acc_count_dec"])
+		u_count_dec = int(res["acc_count_dec"])
+		sub_task_idx = int(res["acc_count_dec"])
+		prior_list_obs = json.loads(res["prior_list_obs"])
+		prior_list_dec = json.loads(res["prior_list_dec"])
+		acc_obs = json.loads(res["acc_obs"])
+		acc_dec = json.loads(res["acc_dec"])
+		u_obs = json.loads(res["u_obs"])
+		u_dec = json.loads(res["u_dec"])
+		num_exp = json.loads(res["num_exp"])
+		
 	else:
+		
 		next_i = "0"
 		next_j = "0"
 		acc_count_obs = 0
@@ -381,8 +430,9 @@ def test():
 		u_dec = []
 		num_exp = []
 
-
+	
 	resp = []
+	#print sub_task_idx
 	title, action, exp1 , exp2, img , imgtitle, sub_task_idx, a = user_study(int(next_j), int(next_i),sub_task_idx, r1)
 
 	if "n" in q1:
@@ -443,11 +493,35 @@ def test():
 		u_count_dec = 0
 		sub_task_idx = 0
 
+
+	data = {
+	"user_id_xai":idnum,
+	"last page": "", 
+    "acc_count_obs":str(acc_count_obs), 
+    "acc_count_dec":str(acc_count_dec), 
+    "u_count_obs":str(u_count_obs), 
+    "u_count_dec":str(u_count_dec), 
+    "sub_task_idx":str(sub_task_idx), 
+    "r1":"", 
+    "prior_list_obs":json.dumps(prior_list_obs),
+    "prior_list_dec":json.dumps(prior_list_dec),
+    "acc_obs":json.dumps(acc_obs),
+    "acc_dec":json.dumps(acc_dec),
+    "u_obs":json.dumps(u_obs),
+    "u_dec":json.dumps(u_dec),
+    "num_exp":json.dumps(num_exp)}
+
+	key = {"user_id_xai":idnum}
+	doc.update(key, data, upsert=True)
+	bots.add((idnum, r1))
+	
+
 	if int(next_j) < episode_num:
 		return render_template("example.html", title = title, action = action, exp1 = exp1 , exp2 = exp2, img = img , imgtitle = imgtitle,
-		next_i = next_i, next_j = next_j, train = False)
+		next_i = next_i, next_j = next_j, train = False, idnum = idnum)
 	else:
-		return render_template("attention.html")
+		bots.remove((idnum, r1))
+		return render_template("attention.html", idnum = idnum)
 
 if __name__ == '__main__':
     app.run(debug = True)
