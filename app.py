@@ -306,7 +306,7 @@ def user_study(j, t,sub_task_idx, r1):
 
 @app.route('/',methods=['GET', 'POST'])
 def index():
-    idnum = "1"#str(uuid.uuid4())
+    idnum = str(uuid.uuid4())
     cursor = doc.find({idnum: {"$exists": True}}).limit(1)
     if cursor.count() == 0:
 		key = {"user_id_xai":idnum}
