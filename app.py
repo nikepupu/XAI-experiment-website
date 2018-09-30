@@ -117,7 +117,7 @@ def training_phase(j, i):
 def user_study(j, t,sub_task_idx, r1):
 
 	task_length = 6
-	episode_num = 1
+	episode_num = 5
 
 	instructions = ["action: grab carrot", "action: place pan on stove", "action: turn on the stove",\
 		"action: grab cup", "action: place cup under coffee maker", "action: push brew button and get coffee"]
@@ -307,7 +307,7 @@ def user_study(j, t,sub_task_idx, r1):
 @app.route('/',methods=['GET', 'POST'])
 def index():
     idnum = str(uuid.uuid4())
-    print idnum
+   
     cursor = doc.find({idnum: {"$exists": True}}).limit(1)
     if cursor.count() == 0:
 		key = {"user_id_xai":idnum}
@@ -384,7 +384,7 @@ def example():
 def test():
 	global bots
 	task_length = 6
-	episode_num = 1
+	episode_num = 5
 
 	form = request.form
 	idnum = form["idnum"]
