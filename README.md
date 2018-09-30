@@ -7,10 +7,13 @@ sudo service mongod start
 go to mongodb shell:
 
 (first time use only)
+
 use XAI
+
 db.createCollection("userProgress")
 
 When deploying on aws or gcp etc need to change the last line of code  for app.py
+
 app.run(host = '0.0.0.0', port = 80) # 80 is the port for http
 
 ToDo:
