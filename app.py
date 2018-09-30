@@ -117,7 +117,7 @@ def training_phase(j, i):
 def user_study(j, t,sub_task_idx, r1):
 
 	task_length = 6
-	episode_num = 5
+	episode_num = 1
 
 	instructions = ["action: grab carrot", "action: place pan on stove", "action: turn on the stove",\
 		"action: grab cup", "action: place cup under coffee maker", "action: push brew button and get coffee"]
@@ -307,6 +307,7 @@ def user_study(j, t,sub_task_idx, r1):
 @app.route('/',methods=['GET', 'POST'])
 def index():
     idnum = str(uuid.uuid4())
+    print idnum
     cursor = doc.find({idnum: {"$exists": True}}).limit(1)
     if cursor.count() == 0:
 		key = {"user_id_xai":idnum}
@@ -383,7 +384,7 @@ def example():
 def test():
 	global bots
 	task_length = 6
-	episode_num = 5
+	episode_num = 1
 
 	form = request.form
 	idnum = form["idnum"]
@@ -448,7 +449,7 @@ def test():
 		r1.update_mem(resp)
 
 		prior = r1.update_prior()
-		print prior
+		
 		old_j = next_j
 		next_j = str(int(next_j) +  (int(next_i) + 1)/task_length)
 		next_i = str( (int(next_i)+1)%task_length )
@@ -475,17 +476,6 @@ def test():
 			u_count_obs = 0
 			u_count_dec = 0
 			sub_task_idx = 0
-
-			print prior_list_obs
-			print prior_list_dec
-
-			print acc_obs
-			print acc_dec
-
-			print u_obs
-			print u_dec
-
-		
 	else:
 		
 		next_i = "0"
@@ -538,13 +528,7 @@ def test():
 		next_i = next_i, next_j = next_j, train = False, idnum = idnum)
 	else:
 		bots.remove((idnum, r1))
-		print prior_list_obs
-		print prior_list_dec
-		print acc_obs
-		print acc_dec
-		print u_obs
-		print u_dec
-		return render_template("attention.html", idnum = idnum)
+		return render_template("result.html", idnum = idnum)
 
 if __name__ == '__main__':
     app.run(debug = True)

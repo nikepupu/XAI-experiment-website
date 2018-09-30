@@ -11,7 +11,7 @@
 	{% else %}
 	<h3 id="phase"> Testing Phase: Please pay close attention</h1>
 	{% endif %}
-	
+
 	 <p>As two separate modules, you know that they go wrong at a different, unknown probability and the probability does not change.
 	 	<br><b>which means one module went wrong does not lead to errors in other modules </b></p>
 </div>
@@ -73,8 +73,23 @@
 
 {% block script %}
 <script>
+function getCookie(cname) {
+    var name = cname + "=";
+    var ca = document.cookie.split(';');
+    for(var i = 0; i < ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0) == ' ') {
+            c = c.substring(1);
+        }
+        if (c.indexOf(name) == 0) {
+            return c.substring(name.length, c.length);
+        }
+    }
+    return "";
+}
+
 $(document).ready(function () {
-	
+
 	$("#show" ).click( function(event){
 		event.preventDefault();
 		
