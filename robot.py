@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 
 # error type (or explanation type)
-# random.seed(0)
+random.seed(1)
 x_types = ["ok", "obs", "dec", "obs_dec"]
 init_err_obs = 0.8
 init_err_dec = 0.25
@@ -113,6 +113,7 @@ class robot:
 
 		for i in range(self.n_err):
 			r = random.random()
+			r = 0.9
 			prob = self.err[i]["ok"]
 			if r > prob:
 				action.append(True)

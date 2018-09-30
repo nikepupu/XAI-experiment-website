@@ -231,9 +231,6 @@ def user_study(j, t,sub_task_idx, r1):
 	task_name = ["cook carrot", "get coffee"]
 	
 
-
-	print t
-	print sub_task_idx
 	if t < 3:
 		title = "Task: "+ task_name[0]
 	else:
@@ -328,16 +325,22 @@ def index():
     	"acc_dec":"",
     	"u_obs":"",
     	"u_dec":"",
-    	"num_exp":""}
+    	"num_exp":"",
+    	"action": ""
+    	}
 		doc.update(key, data, upsert=True)
 	
     return render_template("intro.html",idnum = idnum)
     
 @app.route('/start',methods=['POST', 'GET'])
-def legends():
+def legends(show=True):
 	form = request.form
 	
-	idnum = form["idnum"]
+	if 'idnum' in form:
+		idnum = form["idnum"]
+	else:
+		idnum = 'NONE'
+
 	img1 = ["cup_next_to_juicer.png", "cup_not_under_maker.png","hand_carrot.png","hand_apple.png", "hand_cup.png","maker_on.png", 
 	"not_on_stove.png","on_stove.png", "open_stove.png","push_pour_button_off.png"]
 	cap1 = ["cup next to juicer","cup next to coffee maker", "carrot in hand","apple in hand","cup in hand","coffee maker on",
@@ -349,9 +352,12 @@ def legends():
 	cap2 = ["cup in front of juicer", "cup under coffee maker", "lemon in hand", "orange in hand", "plate in hand", "coffee maker off",
 	"pan next to stove", "picture of stove and oven","hand near oven switch", "coffee maker on, cup under coffee maker"]
 
-	return render_template("legends.html", images1 = img1, images2 = img2, cap1 = cap1, cap2 = cap2, idnum = idnum)
+	return render_template("legends.html", images1 = img1, images2 = img2, cap1 = cap1, cap2 = cap2, idnum = idnum, show = show)
 
 
+@app.route('/hints', methods=['POST', 'GET'])
+def hints():
+	return legends(show = False)
 
 @app.route('/example',  methods=['POST', 'GET'])
 def example():
@@ -382,28 +388,20 @@ def test():
 	form = request.form
 	idnum = form["idnum"]
 	
-	if 'q1' in form:
+	if 'q1' in form and 'q2' in form:
 		q1 = form['q1']
-	else:
-		q1 = "err"
-
-	if 'q2' in form:
 		q2 = form['q2']
-	else:
-		q2 = "err"
-
-	
-	if 'next_i' in form and 'next_j' in form:
 		next_j = form["next_j"]
 		next_i = form["next_i"]
 		r1 = [item for item in bots if item[0] == idnum ][0][1]
+		bots.remove((idnum, r1))
 		query = {"user_id_xai":idnum}
 		res = doc.find_one(query)
 		acc_count_obs = int(res["acc_count_obs"])
 		acc_count_dec = int(res["acc_count_dec"])
-		u_count_obs = int(res["acc_count_dec"])
-		u_count_dec = int(res["acc_count_dec"])
-		sub_task_idx = int(res["acc_count_dec"])
+		u_count_obs = int(res["u_count_obs"])
+		u_count_dec = int(res["u_count_dec"])
+		sub_task_idx = int(res["sub_task_idx"])
 		prior_list_obs = json.loads(res["prior_list_obs"])
 		prior_list_dec = json.loads(res["prior_list_dec"])
 		acc_obs = json.loads(res["acc_obs"])
@@ -411,6 +409,82 @@ def test():
 		u_obs = json.loads(res["u_obs"])
 		u_dec = json.loads(res["u_dec"])
 		num_exp = json.loads(res["num_exp"])
+		a = json.loads(res["action"])
+
+
+		resp = []
+
+		if "n" in q1:
+			resp.append("obs")
+		else:
+			resp.append("ok")
+
+		if "n" in q2:
+			resp.append("dec")
+		else:
+			resp.append("ok")
+
+	
+		if a[0] == True and resp[0] == "obs":
+			acc_count_obs += 1
+		elif a[0] == False and resp[0] == "ok":
+			acc_count_obs += 1
+
+		if a[1] == True and resp[1] == "dec":
+			acc_count_dec += 1
+		elif a[1] == False and resp[1] == "ok":
+			acc_count_dec += 1
+
+		if resp[0] == "obs":
+			u_count_obs += 1
+
+		if resp[1] == "dec":
+			u_count_dec += 1
+
+
+
+	####
+
+		r1.update_mem(resp)
+
+		prior = r1.update_prior()
+		print prior
+		old_j = next_j
+		next_j = str(int(next_j) +  (int(next_i) + 1)/task_length)
+		next_i = str( (int(next_i)+1)%task_length )
+
+
+		if old_j != next_j:
+			num_exp.append(r1.exp_num*1.0/(task_length))
+			r1.exp_num = 0
+
+			# average prediction result
+			u_obs.append(1.0*u_count_obs/task_length)
+			u_dec.append(1.0*u_count_dec/task_length)
+
+			# human prediction accuracy
+			acc_obs.append(1.0*acc_count_obs/task_length)
+			acc_dec.append(1.0*acc_count_dec/task_length)
+
+			# machine prior
+			prior_list_obs.append(prior[0]["obs"])
+			prior_list_dec.append(prior[1]["dec"])
+
+			acc_count_obs = 0
+			acc_count_dec = 0
+			u_count_obs = 0
+			u_count_dec = 0
+			sub_task_idx = 0
+
+			print prior_list_obs
+			print prior_list_dec
+
+			print acc_obs
+			print acc_dec
+
+			print u_obs
+			print u_dec
+
 		
 	else:
 		
@@ -422,6 +496,7 @@ def test():
 		u_count_dec = 0
 		sub_task_idx = 0
 		r1 = robot(T=task_length*episode_num)
+		bots.add((idnum, r1))
 		prior_list_obs = []
 		prior_list_dec = []
 		acc_obs = []
@@ -431,67 +506,8 @@ def test():
 		num_exp = []
 
 	
-	resp = []
 	#print sub_task_idx
 	title, action, exp1 , exp2, img , imgtitle, sub_task_idx, a = user_study(int(next_j), int(next_i),sub_task_idx, r1)
-
-	if "n" in q1:
-		resp.append("obs")
-	else:
-		resp.append("ok")
-
-	if "n" in q2:
-		resp.append("dec")
-	else:
-		resp.append("ok")
-
-	if a[0] == True and resp[0] == "obs":
-		acc_count_obs += 1
-	elif a[0] == False and resp[0] == "ok":
-		acc_count_obs += 1
-
-	if a[1] == True and resp[1] == "dec":
-		acc_count_dec += 1
-	elif a[1] == False and resp[1] == "ok":
-		acc_count_dec += 1
-
-	if resp[0] == "obs":
-		u_count_obs += 1
-
-	if resp[1] == "dec":
-		u_count_dec += 1
-
-
-	####
-	r1.update_mem(resp)
-
-	prior = r1.update_prior()
-
-	old_j = next_j
-	next_j = str(int(next_j) +  (int(next_i) + 1)/task_length)
-	next_i = str( (int(next_i)+1)%task_length )
-
-	if old_j != next_j:
-		num_exp.append(r1.exp_num*1.0/(task_length))
-		r1.exp_num = 0
-
-		# average prediction result
-		u_obs.append(1.0*u_count_obs/task_length)
-		u_dec.append(1.0*u_count_dec/task_length)
-
-		# human prediction accuracy
-		acc_obs.append(1.0*acc_count_obs/task_length)
-		acc_dec.append(1.0*acc_count_dec/task_length)
-
-		# machine prior
-		prior_list_obs.append(prior[0]["obs"])
-		prior_list_dec.append(prior[1]["dec"])
-
-		acc_count_obs = 0
-		acc_count_dec = 0
-		u_count_obs = 0
-		u_count_dec = 0
-		sub_task_idx = 0
 
 
 	data = {
@@ -509,18 +525,25 @@ def test():
     "acc_dec":json.dumps(acc_dec),
     "u_obs":json.dumps(u_obs),
     "u_dec":json.dumps(u_dec),
-    "num_exp":json.dumps(num_exp)}
+    "num_exp":json.dumps(num_exp),
+    "action":json.dumps(a)}
 
 	key = {"user_id_xai":idnum}
 	doc.update(key, data, upsert=True)
 	bots.add((idnum, r1))
-	
+
 
 	if int(next_j) < episode_num:
 		return render_template("example.html", title = title, action = action, exp1 = exp1 , exp2 = exp2, img = img , imgtitle = imgtitle,
 		next_i = next_i, next_j = next_j, train = False, idnum = idnum)
 	else:
 		bots.remove((idnum, r1))
+		print prior_list_obs
+		print prior_list_dec
+		print acc_obs
+		print acc_dec
+		print u_obs
+		print u_dec
 		return render_template("attention.html", idnum = idnum)
 
 if __name__ == '__main__':

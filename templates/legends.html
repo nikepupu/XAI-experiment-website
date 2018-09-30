@@ -41,11 +41,14 @@
 
 
 {% block bot %}
+
+{% if show %}
 <div class="col-md-2 col-md-offset-5">
 	<form action="/example" method="POST">
 		<input type='hidden' name='idnum' value={{idnum}}>
  		<input type="submit" value="I understand the meaning of each picture and want to start the trial">
 	</form>
 </div>
+{% endif %}
 
 {% endblock %}
