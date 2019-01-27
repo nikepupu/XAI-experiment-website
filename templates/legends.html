@@ -8,45 +8,46 @@
 {% endblock %}
 
 {% block left %} 
-
+<div class="col-md-offset-3" >
+<div class="row">
 {% for item, cap in images1|zip(cap1) %}
-<div class="text-center">
+<div class="column2">
 	<figure>
-		<img src="static/img/{{item}}"  height="300" width="300"/>
+		<img src="static/img/{{item}}"  height="250" width="250"/>
 		<figcaption>{{cap}}</figcaption>
 	</figure>
 </div>
-<br>
-<br>
 {% endfor %}
-
-{% endblock %}
-
-
-{% block right %} 
-
-{% for item, cap in images2|zip(cap2) %}
-<div class="text-center">
-	<figure>
-		<img src="static/img/{{item}}"  height="500" width="500"/>
-		<figcaption>{{cap}}</figcaption>
-	</figure>
 </div>
-<br>
-<br>
-{% endfor %}
-
-{% endblock %}
-
-
-{% block bot %}
+</div>
 <div class = "row">
-	<div class="col-md-2 col-md-offset-4">
-	<iframe width="640" height="480"
+	<div class="col-md-2 col-md-offset-3">
+	<font color="red">Please watch this video about the initial setups carefully</font><br>
+	<iframe width="320" height="240"
 		src="https://www.youtube.com/embed/6rABvIGKmfw" allowfullscreen>
 	</iframe>
 	</div>
 </div>
+{% endblock %}
+
+
+{% block right %}
+<div class="col-md-offset-3" >
+<div class="row">
+{% for item, cap in images2|zip(cap2) %}
+<div class="column1">
+	<figure>
+		<img src="static/img/{{item}}"  height="450" width="450"/>
+		<figcaption>{{cap}}</figcaption>
+	</figure>
+</div>
+{% endfor %}
+</div>
+</div>
+{% endblock %}
+
+
+{% block bot %}
 
 {% if show %}
 <div class = "row">

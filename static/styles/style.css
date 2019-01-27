@@ -25,4 +25,13 @@
   display: table;
 }
 
+body {
+background-image: url("/static/img/ipad.png");
+background-repeat: no-repeat;
+background-size: cover;
+ }
 
+ #bg{
+  padding-top: 200px;
+
+ }
