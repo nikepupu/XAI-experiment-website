@@ -1,65 +1,40 @@
 {% extends "base.html" %}
 {% block id %} {{id}} {% endblock %}
 
-{% block top %}  
+{% block top %} 
 <div class="text-center">
-
-	 <h1>{{title}}</h2>
-	 <h2>{{action}}</h1>
-	 	{% if  train %}
-	<h3 id="phase"> Training Phase: Don't worry about it if you cannot get everything correct.</h1>
-	{% else %}
-	<h3 id="phase"> Testing Phase: Please pay close attention</h1>
-	{% endif %}
-
-	 <p>As two separate modules, you know that they go wrong at a different, unknown probability and the probability does not change.
-	 	<br><b>which means one module went wrong does not lead to errors in other modules </b></p>
+	<h2> Task: {{task}}</h2>
 </div>
 {% endblock %}
 
 {% block left %} 
 <div class="text-center">
-	<figure>
-		<img src="static/img/{{img}}"  height="200" width="200"/>
-		<figcaption>{{imgtitle}}</figcaption>
-	</figure>
+	<div class = "row">
+	<div class="col-md-2 col-md-offset-4" id = "video">
+
+	</div>
+</div>
 
 
-<h3> Explanation: </h3>
-<h4>State (vision module output):</h4>
- {{exp1}}
-
-<h4>Task plan (planning module output): </h4>
- {{exp2}}
+ 	<div id="exp">
+ 	
+	</div>
 </div>
 
 {% endblock %}
 
 {% block right %}
-<form action = "/test", method="POST", id = "questions">
-<STRONG>Question 1</STRONG>: Do you think the robot's vision module is working fine?
-<INPUT TYPE="radio" NAME="q1" VALUE="y">Yes
-<INPUT TYPE="radio" NAME="q1" VALUE="n">No
-<br>
 
-<STRONG>Question 2</STRONG>: Do you think the robot's task plan is right?
-<INPUT TYPE="radio" NAME="q2" VALUE="y">Yes
-<INPUT TYPE="radio" NAME="q2" VALUE="n">No
-<br>
-<INPUT TYPE='hidden' NAME='next_i' VALUE={{next_i}}>
-<INPUT TYPE='hidden' NAME='next_j' VALUE={{next_j}}>
-<INPUT TYPE='hidden' NAME='idnum' VALUE={{idnum}}>
-	{% if  train %}
-  	<button id = "show">Show Solution</button>
-  	{% else %}
-  	<button id = "show">next question</button>
-  	{% endif %}
+<div id = "questions">
 
+</div>
+ 
+<button id = "show">submit</button>
  	
-</form>
-<p id = "sol"> </p>
+
 	
 <div id= "error"> </div>
+
 
 {% endblock %} 
 
@@ -73,63 +48,513 @@
 
 {% block script %}
 <script>
-function getCookie(cname) {
-    var name = cname + "=";
-    var ca = document.cookie.split(';');
-    for(var i = 0; i < ca.length; i++) {
-        var c = ca[i];
-        while (c.charAt(0) == ' ') {
-            c = c.substring(1);
-        }
-        if (c.indexOf(name) == 0) {
-            return c.substring(name.length, c.length);
-        }
-    }
-    return "";
-}
 
 $(document).ready(function () {
+	var state = 1;
+	var question = 1;
+	var okSkip = 0;
+
+	var exp = false;
+	var ans1 = [];
+	var ans2 = [];
+	var ans3 = [];
+
+	if("{{explanation}}" == "True")
+		exp = true;
+	else
+		exp = false;
+	
+	var startTime, endTime, timeDiff;
+
+	if(exp == false)
+		question = 2;
+
+	startTime = new Date();
+	renderQuestion(question);
+	renderVideo(0,0)
+
+    // parameters: state and value of the submitted response
+	function renderExplanation(s, v,q)
+	{
+		switch(s.toString()+v.toString()+q.toString()){
+			case "111" :
+				$("#exp").empty().append(
+				`	<h3> Explanation: </h3>
+					<div class = "row">
+					<div class="column3">
+    				<figure>
+						<img src="static/img/hand_empty.png"  height="100" width="100"/>
+					</figure>
+					</div>
+
+					<div class = "column3">
+    				<figure>
+						<img src="static/img/arrow.jpg"  height="100" width="100"/>
+					</figure>
+					</div>
+					<div class="column3">
+					  <figure>
+						<img src="static/img/hand_orange.png"  height="100" width="100"/>
+					</figure>
+					</div>
+					</div>
+				`
+    			);
+				break;
+			case "121":
+			$("#exp").empty().append(
+				`	<h3> Explanation: </h3>
+					<div class = "row">
+					<div class="column1">
+					  <figure>
+						<img src="static/img/hand_orange.png"  height="100" width="100"/>
+					</figure>
+					</div>
+					</div>
+				`
+    			);
+
+			break;
+
+			case "211" :
+				$("#exp").empty().append(
+				`	<h3> Explanation: </h3>
+					<div class = "row">
+					<div class="column3">
+    				<figure>
+						<img src="static/img/hand_empty.png"  height="100" width="100"/>
+					</figure>
+					</div>
+
+					<div class = "column3">
+    				<figure>
+						<img src="static/img/arrow.jpg"  height="100" width="100"/>
+					</figure>
+					</div>
+					<div class="column3">
+					  <figure>
+						<img src="static/img/hand_cup.png"  height="100" width="100"/>
+					</figure>
+					</div>
+					</div>
+				`
+    			);
+				break;
+			case "221":
+			$("#exp").empty().append(
+				`	<h3> Explanation: </h3>
+					<div class = "row">
+					<div class="column1">
+					  <figure>
+						<img src="static/img/hand_cup.png"  height="100" width="100"/>
+					</figure>
+					</div>
+					</div>
+				`
+    			);
+
+			break;			
+			default:
+			$("#exp").empty();
+			break
+
+		}
+
+	}
+
+
+	function renderQuestion(q)
+	{
+
+		switch(q.toString())
+		{
+			case "1":
+			if(okSkip == 1)
+			$("#questions").empty().append(
+			`
+			<STRONG>You can ask the following questions to the robot </STRONG> <br>
+			<INPUT TYPE="radio" NAME="q" VALUE="1">What are you going to do? <br>
+			<INPUT TYPE="radio" NAME="q" VALUE="2"> Are you looking for something? <br> 
+			<INPUT TYPE="radio" NAME="q" VALUE="3"> I don't want to ask anything <br>
+			<br>
+			`
+			);
+			else
+			{
+			$("#questions").empty().append(
+			`
+			<STRONG>You can ask the following questions </STRONG> <br>
+			<INPUT TYPE="radio" NAME="q" VALUE="1">What are you going to do? <br>
+			<INPUT TYPE="radio" NAME="q" VALUE="2"> Are you looking for something? <br> 
+			<br>
+			`
+			);				
+			}
+
+			break;
+
+
+			case "2":
+			  $("#questions").empty().append(
+    				`
+    				<STRONG>Question</STRONG>: What is the robot going to do?: <br>
+					<INPUT TYPE="radio" NAME="q" VALUE="1"> Use the juicer <br>
+					<INPUT TYPE="radio" NAME="q" VALUE="2"> Take the Knife <br>
+					<INPUT TYPE="radio" NAME="q" VALUE="3"> Take the Cup <br>
+					<INPUT TYPE="radio" NAME="q" VALUE="4"> Take the orange <br>
+					<br>
+    				`
+    			);
+			break;
+
+			case "3":
+			  $("#questions").empty().append(
+    				`
+    				<STRONG>Question</STRONG>: Where does the robot think the orange is?: <br>
+					<INPUT TYPE="radio" NAME="q" VALUE="1"> In the cabinet <br>
+					<INPUT TYPE="radio" NAME="q" VALUE="2"> On the table next to the cutboard  <br>
+					<INPUT TYPE="radio" NAME="q" VALUE="3"> Next to sink <br>
+					<INPUT TYPE="radio" NAME="q" VALUE="4"> it has no idea  <br>
+					<br>
+    				`
+    			);
+
+			break;
+
+			case "4":
+			  $("#questions").empty().append(
+    				`
+    				<STRONG>Question</STRONG>: Where does the robot think the knife is?: <br>
+					<INPUT TYPE="radio" NAME="q" VALUE="1"> In the cabinet <br>
+					<INPUT TYPE="radio" NAME="q" VALUE="2"> On the table next to the cutboard <br>
+					<INPUT TYPE="radio" NAME="q" VALUE="3"> Next to sink <br>
+					<INPUT TYPE="radio" NAME="q" VALUE="4"> it has no idea  <br>
+					<br>
+    				`
+    			); 
+			break;
+			case "5":
+			  $("#questions").empty().append(
+    				`
+    				<STRONG>Question</STRONG>: Where does the robot think the cup is?: <br>
+					<INPUT TYPE="radio" NAME="q" VALUE="1"> In the cabinet <br>
+					<INPUT TYPE="radio" NAME="q" VALUE="2"> On the table next to the cutboard  <br>
+					<INPUT TYPE="radio" NAME="q" VALUE="3"> Next to sink <br>
+					<INPUT TYPE="radio" NAME="q" VALUE="4"> it has no idea <br>
+					<br>
+    				`
+    			);    					
+			break;
+
+			case "6":
+			  $("#questions").empty().append(
+    				`
+    				<STRONG>Can you prvoide some hints to the robot</STRONG>:  actions (to do after the pause): <br>
+					<INPUT TYPE="radio" NAME="q" VALUE="1"> point to the cup <br>
+					<INPUT TYPE="radio" NAME="q" VALUE="2"> point to the cabinet  <br>
+					<INPUT TYPE="radio" NAME="q" VALUE="3"> point to the knife  <br>
+					<INPUT TYPE="radio" NAME="q" VALUE="4"> point to the juicer  <br>
+					<br>
+    				`
+    			);
+			break;
+
+			default:
+				$("#questions").empty();
+				break;			
+		}
+	}
+
+	// parameters: state and wether the previous action choice is correct: 1 means correct, 0 means incorrect
+	function renderVideo(s,v)
+	{
+		switch(s.toString()+v.toString())
+		{
+			// default start up rendering
+			case "00":
+			$("#video").empty().append(
+			`
+			<iframe width="320" height="240"
+				src="https://www.youtube.com/embed/L2kzkqMqQEQ" allowfullscreen>
+			</iframe>
+			`
+			);
+
+			break;
+			case "12":
+			$("#video").empty().append(
+			`
+			<iframe width="320" height="240"
+				src="https://www.youtube.com/embed/j646WBkU6Dk" allowfullscreen>
+			</iframe>
+			`
+			);
+			break;
+
+			case "11":
+			case "13":
+			case "14":
+			$("#video").empty().append(
+			`
+			<iframe width="320" height="240"
+				src="https://www.youtube.com/embed/FfhYMEfteFM" allowfullscreen>
+			</iframe>
+			`
+			);
+
+			break;
+
+			case "21":
+			$("#video").empty().append(
+			`
+			<iframe width="320" height="240"
+				src="https://www.youtube.com/embed/o-kot11-V8Q" allowfullscreen>
+			</iframe>
+			`
+			);
+			break;
+
+			case "22":
+			case "23":
+			case "24":
+			$("#video").empty().append(
+			`
+			<iframe width="320" height="240"
+				src="https://www.youtube.com/embed/kYKd5rmX7J0" allowfullscreen>
+			</iframe>
+			`
+			);
+			break;			
+
+		}
+	}
+
+	function renderSurvey(q)
+	{
+		switch(q.toString())
+		{
+
+			case "1":
+			$("#questions").empty().append(
+    				`
+    				<STRONG>Question</STRONG>: I understand how the robot works. <br>
+					<INPUT TYPE="radio" NAME="q" VALUE="1"> Strongly Disagree <br>
+					<INPUT TYPE="radio" NAME="q" VALUE="2"> Disagree <br>
+					<INPUT TYPE="radio" NAME="q" VALUE="3"> Neutral   <br>
+					<INPUT TYPE="radio" NAME="q" VALUE="4"> Agree   <br>
+					<INPUT TYPE="radio" NAME="q" VALUE="5"> Strongly Agree   <br>
+					<br>
+    				`
+    			);    				
+			break;
+
+			case "2":
+			$("#questions").empty().append(
+    				`
+    				<STRONG>Question</STRONG>: I understand how the robot works. <br>
+					<INPUT TYPE="radio" NAME="q" VALUE="1"> Strongly Disagree <br>
+					<INPUT TYPE="radio" NAME="q" VALUE="2"> Disagree <br>
+					<INPUT TYPE="radio" NAME="q" VALUE="3"> Neutral   <br>
+					<INPUT TYPE="radio" NAME="q" VALUE="4"> Agree   <br>
+					<INPUT TYPE="radio" NAME="q" VALUE="5"> Strongly Agree   <br>
+					<br>
+    				`
+    			); 
+
+			break;
+
+
+			case "3":
+			$("#questions").empty().append(
+    				`
+    				<STRONG>Question</STRONG>: I understand how the robot works. <br>
+					<INPUT TYPE="radio" NAME="q" VALUE="1"> Strongly Disagree <br>
+					<INPUT TYPE="radio" NAME="q" VALUE="2"> Disagree <br>
+					<INPUT TYPE="radio" NAME="q" VALUE="3"> Neutral   <br>
+					<INPUT TYPE="radio" NAME="q" VALUE="4"> Agree   <br>
+					<INPUT TYPE="radio" NAME="q" VALUE="5"> Strongly Agree   <br>
+					<br>
+    				`
+    			); 
+
+			break;
+
+			case "4":
+			$("#questions").empty().append(
+    				`
+    				<STRONG>Question</STRONG>: I understand how the robot works. <br>
+					<INPUT TYPE="radio" NAME="q" VALUE="1"> Strongly Disagree <br>
+					<INPUT TYPE="radio" NAME="q" VALUE="2"> Disagree <br>
+					<INPUT TYPE="radio" NAME="q" VALUE="3"> Neutral   <br>
+					<INPUT TYPE="radio" NAME="q" VALUE="4"> Agree   <br>
+					<INPUT TYPE="radio" NAME="q" VALUE="5"> Strongly Agree   <br>
+					<br>
+    				`
+    			); 
+
+			break;
+
+			case "5":
+			$("#questions").empty().append(
+    				`
+    				<STRONG>Question</STRONG>: I understand how the robot works. <br>
+					<INPUT TYPE="radio" NAME="q" VALUE="1"> Strongly Disagree <br>
+					<INPUT TYPE="radio" NAME="q" VALUE="2"> Disagree <br>
+					<INPUT TYPE="radio" NAME="q" VALUE="3"> Neutral   <br>
+					<INPUT TYPE="radio" NAME="q" VALUE="4"> Agree   <br>
+					<INPUT TYPE="radio" NAME="q" VALUE="5"> Strongly Agree   <br>
+					<br>
+    				`
+    			); 
+
+			break;
+
+
+			case "6":
+			$("#questions").empty().append(
+    				`
+    				<STRONG>Question</STRONG>: I understand how the robot works. <br>
+					<INPUT TYPE="radio" NAME="q" VALUE="1"> Strongly Disagree <br>
+					<INPUT TYPE="radio" NAME="q" VALUE="2"> Disagree <br>
+					<INPUT TYPE="radio" NAME="q" VALUE="3"> Neutral   <br>
+					<INPUT TYPE="radio" NAME="q" VALUE="4"> Agree   <br>
+					<INPUT TYPE="radio" NAME="q" VALUE="5"> Strongly Agree   <br>
+					<br>
+    				`
+    			); 
+
+			break;
+
+			case "7":
+			$("#questions").empty().append(
+    				`
+    				<STRONG>Question</STRONG>: I understand how the robot works. <br>
+					<INPUT TYPE="radio" NAME="q" VALUE="1"> Strongly Disagree <br>
+					<INPUT TYPE="radio" NAME="q" VALUE="2"> Disagree <br>
+					<INPUT TYPE="radio" NAME="q" VALUE="3"> Neutral   <br>
+					<INPUT TYPE="radio" NAME="q" VALUE="4"> Agree   <br>
+					<INPUT TYPE="radio" NAME="q" VALUE="5"> Strongly Agree   <br>
+					<br>
+    				`
+    			); 
+
+			break;
+
+
+		}
+
+	}
+
 
 	$("#show" ).click( function(event){
 		event.preventDefault();
 		
+		console.log(question);
+		if(state < 3)
+		{
+			value = "";
+			$("#error").empty();
+			if ($("input[name=q]").is(':checked'))
+			{
+				value = $("input[name=q]:checked").val();
+			}
+			else{
+				$("#error").empty().append("Please complete the form before submit");
+				return; 
+			}
+
+			if(question==1)
+				okSkip = 1;
+			// first choice
+			if(question != 1)
+			switch (state)
+			{
+				
+				case 1:
+				ans1.push(value);
+				break;
+
+				case 2:
+				ans2.push(value);
+				break;
+			
+			}
+			
+			
+			renderExplanation(state, value,question );
+		
+			if (question == 6)
+			{
+				renderVideo(state, value, question);
+				okSkip = 0;
+				state++;
+				if(exp)
+					question = 1;
+				else
+					question = 2;
+
+			}
+			else if(question != 1 || (question == 1 && value == 3))
+				question++;
+
+			
+			if(state < 3)
+				renderQuestion(question);
+			else
+			{
+				question = 1;
+				endTime =  new Date();
+				timeDiff = endTime-startTime;
+				timeDiff /= 1000;
+				renderSurvey(question);
+			}
 	
 
-		if("{{train}}" == "True")
-		$("#sol").empty().append(
-			`
-			 <b>Solution for Question 1</b> <br>
-			{{ans1}} <br>
-			 <b>Solution for Question</b> 2 <br>
-			{{ans2}} <br>
-			<form action='/example', method = 'POST'>
-			<INPUT TYPE='hidden' NAME='next_i' VALUE={{next_i}}>
-			<INPUT TYPE='hidden' NAME='next_j' VALUE={{next_j}}>
-			<INPUT TYPE='hidden' NAME='idnum' VALUE={{idnum}}>
-			<input type='submit' value='next question'>
-			</form>
-			`)
+		}
 		else
 		{
-			if( ! $("input[name=q1]").is(':checked') || ! $("input[name=q2]").is(':checked') )
-				$("#error").empty().append("Please complete the form before submit"); 
+				value = "";
+				$("#error").empty();
+				if ($("input[name=q]").is(':checked'))
+				{
+					value = $("input[name=q]:checked").val();
+				}
+				else{
+					$("#error").empty().append("Please complete the form before submit");
+					return; 
+				}
 
-			//('input[name=q1]:checked', '#questions').val()
-			
-			else
-    		{
-    			$("#questions").submit();
-    		}
+				ans3.push(value);
 
+				question++;
+				renderSurvey(question);
 
+				if(question  == 8)
+				{
+					
+					ans = JSON.stringify({"ans" : [ans1, ans2, ans3], "explanation" : "{{explanation}}", "time" : timeDiff });
+					
+           			$.ajax({
+                	type: 'POST',
+                	data: ans,
+                	dataType: 'json',
+                	contentType: 'application/json',
+                	url: '/result',
+
+                	success: function (e) {
+                    	window.location.href = "/final";
+                	},
+                	error: function(error) {
+            			console.log("error");
+                		
+           			 }
+            		});
+					}
 		}
 	});
 
 
-	if("{{train}}" == "False")
-	{
-		
-	}
+
 
 });
 </script>
