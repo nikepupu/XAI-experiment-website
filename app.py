@@ -50,7 +50,7 @@ def index():
 def legends(show=True):
 
 	img1 = ["ThingsInTheCabinet.png"]
-	cap1 = ["This is a cabinet which contains some objects: apple, carrots, mango, and orange. The location of the cabinet is marked on the pciture on the left "]
+	cap1 = ["This is a cabinet which contains some objects: apple, carrots, mango, and orange. The location of the cabinet is marked on the pciture at the top "]
 
 	img2 = ["topdown_label.png"]
 	cap2 = ["This is the top down view of the scene, and it marks your position and the position of various important objects."]	

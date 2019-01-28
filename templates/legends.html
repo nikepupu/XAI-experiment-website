@@ -5,37 +5,21 @@
 <div class="text-center">
 	<h2> Environment Configuration </h2>
 	<p> Please pay attention that <font color="red"> Pior to the experiment the robot knows nothing about the environment and has <b>not</b> seen this video</font> </p>
+	<p> <font color="red">Please get familiar with the environment. Note that for visualization purposes, we open all the doors (that can be open) for you. They will be closed in the actual environment. You can watch the video more than once.</font></p>
 </div>
 {% endblock %}
 
 {% block left %} 
-<div class="col-md-offset-3" >
-<div class="row">
-{% for item, cap in images1|zip(cap1) %}
-<div class="column1">
-	<figure>
-		<img src="static/img/{{item}}"  height="225" width="393"/>
-		<figcaption>{{cap}}</figcaption>
-	</figure>
-</div>
-{% endfor %}
-</div>
-</div>
-<div class = "row">
-		
-			<div class="col-md-5 col-md-offset-3 vid column1">
-			<font color="red">Please get familiar with the environment. Note that for visualization purposes, we open all the doors (that can be open) for you. They will be closed in the actual environment. You can watch the video more than once.</font><br>
-			<iframe width="320" height="240"
-				src="https://www.youtube.com/embed/6rABvIGKmfw" allowfullscreen>
-			</iframe>
-			</div>
-		
-</div>
 {% endblock %}
 
 
 {% block right %}
-<div class="col-md-offset-1" >
+
+{% endblock %}
+
+
+{% block bot %}
+<div >
 <div class="row">
 {% for item, cap in images2|zip(cap2) %}
 <div class="column1">
@@ -47,11 +31,34 @@
 {% endfor %}
 </div>
 </div>
-{% endblock %}
+<br>
+<br>
 
 
-{% block bot %}
+<div >
+<div class="row">
+{% for item, cap in images1|zip(cap1) %}
+<div class="column1">
+	<figure>
+		<img src="static/img/{{item}}"  height="225" width="393"/>
+		<figcaption>{{cap}}</figcaption>
+	</figure>
+</div>
+{% endfor %}
+</div>
+</div>
+<br>
+<br>
 
+<div class = "row">
+			
+			<div class="col-md-5 vid column1">
+			<iframe width="320" height="240"
+				src="https://www.youtube.com/embed/6rABvIGKmfw" allowfullscreen>
+			</iframe>
+			</div>
+		
+</div>
 {% if show %}
 <div class = "row">
 	<div class="col-md-2 col-md-offset-5">
