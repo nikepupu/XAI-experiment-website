@@ -49,11 +49,11 @@ def index():
 @app.route('/start',methods=['POST', 'GET'])
 def legends(show=True):
 
-	img1 = ["Cabinet.png", "ThingsInTheCabinet.png"]
-	cap1 = ["cabinet", "Things in the cabinet"]
+	img1 = ["ThingsInTheCabinet.png"]
+	cap1 = ["This is a cabinet which contains some objects: apple, carrots, mango, and orange. The location of the cabinet is marked on the pciture on the left "]
 
 	img2 = ["topdown_label.png"]
-	cap2 = ["top down view of the scene"]	
+	cap2 = ["This is the top down view of the scene, and it marks your position and the position of various important objects."]	
 
 	return render_template("legends.html", images1 = img1, images2 = img2, cap1 = cap1, cap2 = cap2, show = show)
 

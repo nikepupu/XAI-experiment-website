@@ -8,20 +8,24 @@
 	</div>
 </div >
 <div  class="col-md-8 col-md-offset-2">
-	<p>As your humble servant, a humanoid robot "Kara" can do some common household tasks for you, like boiling carrot or making coffee. Recently, Kara sometimes makes mistakes, due to some unknown reasons. After reading the user manual and making observations, you find that there is something wrong with both Kara's vision module and task planning module. <b>As two separate modules, you know that they go wrong at a different, unknown probability and the probability does not change.</b></p>
+	<p>In the pilot study, you are going to collaborate with a humanoid robot on common household tasks. The robot will do most of the work, while you are supposed to help the robot, by making choices using the provided web interface.</p>
 
-	<p>Before taking Kara to the store and wait for several weeks to get a replacement, you want to see whether you can repair it yourself. The user manual tells you that Kara is equipped with the cutting-edge self-repair technology. If the error rate of a module is less than 0.40, Kara can repair that module automatically without your help. Errors which occur more frequently (with probability 0.40-0.69) are considered severe: you should replace the damaged component, before Kara can start its self-repair program to clean up the mess. Errors which often occur (with probability 0.70-0.99) are extremely dangerous: you have to send Kara for repair, otherwise it may disobey commands and harm the user. </p>
+	<ul>
+		<li>The task you will now go through is <STRONG>making orange juice</STRONG>. </li>
+		<li>During the process, robot will initiate the communication channel for several times (indicating that <STRONG>it needs your help</STRONG>). Each time, you can <STRONG> first ask robot some questions</STRONG> (by making choices, if available) to figure out the robot’s task plan. After that, you should help the robot by indicating an <STRONG>action</STRONG>.</li>
+		<li> Note that not all the actions have positive effects, so be careful about what you are choosing. </li>
+		<li> During the experiment, we will have some questions to help you make the choice.</li>
+		<li> After the experiment, we will have an evaluation for you to help us assess the system.  </li>
+	</ul>
 
-	<p>Fortunately, Kara records its recent activities and the output of both modules. Using a built-in diagnostic program, you can help Kara estimate the type of error. The program consists of several replay sessions: in each session, Kara tells you the task it is working on and displays a snapshot after an action. The diagnostic program also gives out explanations showing Kara's states (output of the vison module) or task plans (in terms of precondition and posteffect of an action). To save cost of communication, the program sometimes does not generate explanation for either module: a lack of explanation doesn't indicate the module is working or not.</p>
-
-	<p>In the following replay sessions, you will indicate whether Kara's vision and task planning module are giving out wrong results, based on the snapshots and explanations. Modules can go wrong at the same time. If the vision module is not working, Kara sometimes fails to identify objects, their state changes and positions. For example, a buggy vision module may believe the plate is in the oven, while it is actually next to the oven. Broken task planning module let Kara do things irrelevant to the current task. For example, for the task "getting coffee", a buggy task planning module may generate irrelavant plans such as "taking an apple". Note that two modules are independent and do not affect each other.</p>
+	<p> During this experiment please do not hit <font color="red">refresh</font> button or <font color="red">"go back"</font> button, otherwise the data we collected will become <font color="red">void</font> </p>
 </div>
 {% endblock %}
 
 {% block bot %}
 <div class="col-md-2 col-md-offset-5">
 	<form action="/start", method="POST">
- 		<input type="submit" value="I understand and want to start the test">
+ 		<input type="submit" value="I understand and want to start the experiment">
 	</form>
 </div>
 

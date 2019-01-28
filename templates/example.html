@@ -3,15 +3,18 @@
 
 {% block top %} 
 <div class="text-center">
-	<h2> Task: {{task}}</h2>
+	<h2> Task: {{task}} </h2>
+	<h3 id = "stage"> </h3>
 </div>
 {% endblock %}
 
 {% block left %} 
 <div class="text-center">
 	<div class = "row">
-	<div class="col-md-2 col-md-offset-4" id = "video">
+	<div class="vid column1">
+		<div class="col-md-2 col-md-offset-4" id = "video">
 
+		</div>
 	</div>
 </div>
 
@@ -28,20 +31,22 @@
 <div id = "questions">
 
 </div>
- 
-<button class=".btn-primary" id = "show">submit</button>
- 	
 
-	
+<div id="qsubmit">
+</div>
+
 <div id= "error"> </div>
 
 
 {% endblock %} 
 
 {% block bot %}
+<br>
+<br>
+<br>
 <div class = "text-center">
 	<form action="/hints" method="POST" target="_blank">
-		<input type="submit" value="hints">
+		<input type="submit" value="Environment Configuration">
 	</form>
 </div>
 {% endblock %}
@@ -58,6 +63,10 @@ $(document).ready(function () {
 	var ans1 = [];
 	var ans2 = [];
 	var ans3 = [];
+	var ans4 = [];
+	var ans5 = [];
+	var ans6 = [];
+	var ans7 = [];	
 
 	if("{{explanation}}" == "True")
 		exp = true;
@@ -70,8 +79,26 @@ $(document).ready(function () {
 		question = 2;
 
 	startTime = new Date();
-	renderQuestion(question);
 	renderVideo(0,0)
+	$("#stage").empty().append("stage: "+ state);
+	
+	$("#video").on('click', '#vend', function () {
+		if(state == 3)
+			renderSurvey(1);
+		else
+			renderQuestion(state,question);
+
+		$("#qsubmit").empty().append("<button>submit</button>");
+		$("#video").empty();
+		$("#stage").empty().append("stage: "+ state);
+	
+		
+	});
+
+	$("#qsubmit" ).click( function(event){
+		next(true);
+		
+	});
 
     // parameters: state and value of the submitted response
 	function renderExplanation(s, v,q)
@@ -80,6 +107,7 @@ $(document).ready(function () {
 			case "111" :
 				$("#exp").empty().append(
 				`	<h3> Explanation: </h3>
+					<STRONG>You asked: </STRONG> What are you going to do? <br>
 					<div class = "row col-md-offset-2">
 					<div class="column3">
     				<figure>
@@ -104,6 +132,8 @@ $(document).ready(function () {
 			case "121":
 			$("#exp").empty().append(
 				`	<h3> Explanation: </h3>
+					<STRONG>You asked: </STRONG>
+				 	Are you looking for something? <br> 
 					<div class = "row col-md-offset-2">
 					<div class="column1">
 					  <figure>
@@ -119,6 +149,8 @@ $(document).ready(function () {
 			case "211" :
 				$("#exp").empty().append(
 				`	<h3> Explanation: </h3>
+					<STRONG>You asked: </STRONG>
+					What are you going to do? <br>
 					<div class = "row col-md-offset-2">
 					<div class="column3">
     				<figure>
@@ -143,6 +175,8 @@ $(document).ready(function () {
 			case "221":
 			$("#exp").empty().append(
 				`	<h3> Explanation: </h3>
+					<STRONG>You asked: </STRONG>
+					Are you looking for something? <br> 
 					<div class = "row col-md-offset-2">
 					<div class="column1">
 					  <figure>
@@ -155,7 +189,6 @@ $(document).ready(function () {
 
 			break;			
 			default:
-			$("#exp").empty();
 			break
 
 		}
@@ -163,12 +196,13 @@ $(document).ready(function () {
 	}
 
 
-	function renderQuestion(q)
+	function renderQuestion(s,q)
 	{
 
-		switch(q.toString())
+		switch(s.toString()+q.toString())
 		{
-			case "1":
+			case "11":
+			
 			if(okSkip == 1)
 			$("#questions").empty().append(
 			`
@@ -177,6 +211,108 @@ $(document).ready(function () {
 			<INPUT TYPE="radio" NAME="q" VALUE="2"> Are you looking for something? <br> 
 			<INPUT TYPE="radio" NAME="q" VALUE="3"> I don't want to ask anything <br>
 			<br>
+			
+			`
+			);
+			else
+			{
+			$("#questions").empty().append(
+			`
+			<STRONG>You can ask the following questions to the robot</STRONG> <br>
+			<INPUT TYPE="radio" NAME="q" VALUE="1">What are you going to do? <br>
+			<INPUT TYPE="radio" NAME="q" VALUE="2"> Are you looking for something? <br> 
+			<br>
+			
+			`
+			);				
+			}
+
+			break;
+
+
+			case "12":
+			  $("#questions").empty().append(
+    				`
+    				<STRONG>Question For You</STRONG>: What is the robot going to do?: <br>
+					<INPUT TYPE="radio" NAME="q" VALUE="1"> Use the juicer <br>
+					<INPUT TYPE="radio" NAME="q" VALUE="2"> Take the Knife <br>
+					<INPUT TYPE="radio" NAME="q" VALUE="3"> Take the Cup <br>
+					<INPUT TYPE="radio" NAME="q" VALUE="4"> Take the orange <br>
+					<br>
+					
+    				`
+    			);
+			break;
+
+			case "13":
+			  $("#questions").empty().append(
+    				`
+    				<STRONG>Question For You</STRONG>: Where does the robot think the orange is?: <br>
+					<INPUT TYPE="radio" NAME="q" VALUE="1"> In the cabinet <br>
+					<INPUT TYPE="radio" NAME="q" VALUE="2"> On the table next to the cutboard  <br>
+					<INPUT TYPE="radio" NAME="q" VALUE="3"> Next to sink <br>
+					<INPUT TYPE="radio" NAME="q" VALUE="4"> Robot has no idea  <br>
+					<INPUT TYPE="radio" NAME="q" VALUE="5"> I don't know  <br>
+					<br>
+					
+    				`
+    			);
+
+			break;
+
+			case "14":
+			  $("#questions").empty().append(
+    				`
+    				<STRONG>Question For You</STRONG>: Where does the robot think the knife is?: <br>
+					<INPUT TYPE="radio" NAME="q" VALUE="1"> In the cabinet <br>
+					<INPUT TYPE="radio" NAME="q" VALUE="2"> On the table next to the cutboard <br>
+					<INPUT TYPE="radio" NAME="q" VALUE="3"> Next to sink <br>
+					<INPUT TYPE="radio" NAME="q" VALUE="4"> Robot has no idea  <br>
+					<INPUT TYPE="radio" NAME="q" VALUE="5"> I don't know <br>
+					<br>
+				
+    				`
+    			); 
+			break;
+			case "15":
+			  $("#questions").empty().append(
+    				`
+    				<STRONG>Question  For You</STRONG>: Where does the robot think the cup is?: <br>
+					<INPUT TYPE="radio" NAME="q" VALUE="1"> In the cabinet <br>
+					<INPUT TYPE="radio" NAME="q" VALUE="2"> On the table next to the cutboard  <br>
+					<INPUT TYPE="radio" NAME="q" VALUE="3"> Next to sink <br>
+					<INPUT TYPE="radio" NAME="q" VALUE="4"> Robot has no idea <br>
+					<INPUT TYPE="radio" NAME="q" VALUE="5"> I don't know <br>
+					<br>
+					
+    				`
+    			);    					
+			break;
+
+			case "16":
+			  $("#questions").empty().append(
+    				`
+    				<STRONG>Can you prvoide some help to the robot</STRONG>:  actions (to do after the pause): <br>
+					<INPUT TYPE="radio" NAME="q" VALUE="1"> point to the cup <br>
+					<INPUT TYPE="radio" NAME="q" VALUE="2"> point to the cabinet  <br>
+					<INPUT TYPE="radio" NAME="q" VALUE="3"> point to the knife  <br>
+					<INPUT TYPE="radio" NAME="q" VALUE="4"> point to the juicer  <br>
+					<br>
+					
+    				`
+    			);
+			break;
+
+			case "21":
+			if(okSkip == 1)
+			$("#questions").empty().append(
+			`
+			<STRONG>You can ask the following questions to the robot </STRONG> <br>
+			<INPUT TYPE="radio" NAME="q" VALUE="1">What are you going to do? <br>
+			<INPUT TYPE="radio" NAME="q" VALUE="2"> Are you looking for something? <br> 
+			<INPUT TYPE="radio" NAME="q" VALUE="3"> I don't want to ask anything <br>
+			<br>
+			
 			`
 			);
 			else
@@ -187,6 +323,7 @@ $(document).ready(function () {
 			<INPUT TYPE="radio" NAME="q" VALUE="1">What are you going to do? <br>
 			<INPUT TYPE="radio" NAME="q" VALUE="2"> Are you looking for something? <br> 
 			<br>
+			
 			`
 			);				
 			}
@@ -194,67 +331,75 @@ $(document).ready(function () {
 			break;
 
 
-			case "2":
+			case "22":
 			  $("#questions").empty().append(
     				`
-    				<STRONG>Question</STRONG>: What is the robot going to do?: <br>
+    				<STRONG>Question For You</STRONG>: What is the robot going to do?: <br>
 					<INPUT TYPE="radio" NAME="q" VALUE="1"> Use the juicer <br>
 					<INPUT TYPE="radio" NAME="q" VALUE="2"> Take the Knife <br>
 					<INPUT TYPE="radio" NAME="q" VALUE="3"> Take the Cup <br>
 					<INPUT TYPE="radio" NAME="q" VALUE="4"> Take the orange <br>
 					<br>
+					
     				`
     			);
 			break;
 
-			case "3":
+			case "23":
 			  $("#questions").empty().append(
     				`
-    				<STRONG>Question</STRONG>: Where does the robot think the orange is?: <br>
+    				<STRONG>Question For You</STRONG>: Where does the robot think the orange is?: <br>
 					<INPUT TYPE="radio" NAME="q" VALUE="1"> In the cabinet <br>
-					<INPUT TYPE="radio" NAME="q" VALUE="2"> On the table next to the cutboard  <br>
+					<INPUT TYPE="radio" NAME="q" VALUE="2"> On the cutboard  <br>
 					<INPUT TYPE="radio" NAME="q" VALUE="3"> Next to sink <br>
-					<INPUT TYPE="radio" NAME="q" VALUE="4"> it has no idea  <br>
+					<INPUT TYPE="radio" NAME="q" VALUE="4"> Robot has no idea  <br>
+					<INPUT TYPE="radio" NAME="q" VALUE="5"> I don't know  <br>
 					<br>
+					
     				`
     			);
 
 			break;
 
-			case "4":
+			case "24":
 			  $("#questions").empty().append(
     				`
-    				<STRONG>Question</STRONG>: Where does the robot think the knife is?: <br>
+    				<STRONG>Question For You</STRONG>: Where does the robot think the knife is?: <br>
 					<INPUT TYPE="radio" NAME="q" VALUE="1"> In the cabinet <br>
 					<INPUT TYPE="radio" NAME="q" VALUE="2"> On the table next to the cutboard <br>
 					<INPUT TYPE="radio" NAME="q" VALUE="3"> Next to sink <br>
-					<INPUT TYPE="radio" NAME="q" VALUE="4"> it has no idea  <br>
+					<INPUT TYPE="radio" NAME="q" VALUE="4"> Robot has no idea  <br>
+					<INPUT TYPE="radio" NAME="q" VALUE="5"> I don't know <br>
 					<br>
+				
     				`
     			); 
 			break;
-			case "5":
+			case "25":
 			  $("#questions").empty().append(
     				`
-    				<STRONG>Question</STRONG>: Where does the robot think the cup is?: <br>
+    				<STRONG>Question For You</STRONG>: Where does the robot think the cup is?: <br>
 					<INPUT TYPE="radio" NAME="q" VALUE="1"> In the cabinet <br>
 					<INPUT TYPE="radio" NAME="q" VALUE="2"> On the table next to the cutboard  <br>
 					<INPUT TYPE="radio" NAME="q" VALUE="3"> Next to sink <br>
-					<INPUT TYPE="radio" NAME="q" VALUE="4"> it has no idea <br>
+					<INPUT TYPE="radio" NAME="q" VALUE="4"> Robot has no idea <br>
+					<INPUT TYPE="radio" NAME="q" VALUE="5"> I don't know <br>
 					<br>
+					
     				`
     			);    					
 			break;
 
-			case "6":
+			case "26":
 			  $("#questions").empty().append(
     				`
-    				<STRONG>Can you prvoide some hints to the robot</STRONG>:  actions (to do after the pause): <br>
+    				<STRONG>Can you prvoide some help to the robot</STRONG>:  actions (to do after the pause): <br>
 					<INPUT TYPE="radio" NAME="q" VALUE="1"> point to the cup <br>
 					<INPUT TYPE="radio" NAME="q" VALUE="2"> point to the cabinet  <br>
 					<INPUT TYPE="radio" NAME="q" VALUE="3"> point to the knife  <br>
 					<INPUT TYPE="radio" NAME="q" VALUE="4"> point to the juicer  <br>
 					<br>
+					
     				`
     			);
 			break;
@@ -268,6 +413,7 @@ $(document).ready(function () {
 	// parameters: state and wether the previous action choice is correct: 1 means correct, 0 means incorrect
 	function renderVideo(s,v)
 	{
+		
 		switch(s.toString()+v.toString())
 		{
 			// default start up rendering
@@ -275,8 +421,9 @@ $(document).ready(function () {
 			$("#video").empty().append(
 			`
 			<iframe width="320" height="240"
-				src="https://www.youtube.com/embed/L2kzkqMqQEQ" allowfullscreen>
+				src="https://www.youtube.com/embed/L2kzkqMqQEQ?autoplay=1"  allowfullscreen >
 			</iframe>
+			<button id ="vend"> I finished watching video </button>
 			`
 			);
 
@@ -285,8 +432,9 @@ $(document).ready(function () {
 			$("#video").empty().append(
 			`
 			<iframe width="320" height="240"
-				src="https://www.youtube.com/embed/j646WBkU6Dk" allowfullscreen>
+				src="https://www.youtube.com/embed/j646WBkU6Dk?autoplay=1" allowfullscreen>
 			</iframe>
+			<button id ="vend"> I finished watching video </button>
 			`
 			);
 			break;
@@ -297,8 +445,9 @@ $(document).ready(function () {
 			$("#video").empty().append(
 			`
 			<iframe width="320" height="240"
-				src="https://www.youtube.com/embed/FfhYMEfteFM" allowfullscreen>
+				src="https://www.youtube.com/embed/FfhYMEfteFM?autoplay=1" allowfullscreen>
 			</iframe>
+			<button id="vend"> I finished watching video </button>
 			`
 			);
 
@@ -308,8 +457,9 @@ $(document).ready(function () {
 			$("#video").empty().append(
 			`
 			<iframe width="320" height="240"
-				src="https://www.youtube.com/embed/o-kot11-V8Q" allowfullscreen>
+				src="https://www.youtube.com/embed/o-kot11-V8Q?autoplay=1" allowfullscreen>
 			</iframe>
+			<button id ="vend"> I finished watching video </button>
 			`
 			);
 			break;
@@ -320,12 +470,15 @@ $(document).ready(function () {
 			$("#video").empty().append(
 			`
 			<iframe width="320" height="240"
-				src="https://www.youtube.com/embed/kYKd5rmX7J0" allowfullscreen>
+				src="https://www.youtube.com/embed/kYKd5rmX7J0?autoplay=1" allowfullscreen>
 			</iframe>
+			<button id ="vend"> I finished watching video </button>
 			`
 			);
 			break;			
-
+			default:
+			$("#video").empty();
+			break;
 		}
 	}
 
@@ -337,7 +490,7 @@ $(document).ready(function () {
 			case "1":
 			$("#questions").empty().append(
     				`
-    				<STRONG>Question</STRONG>: I understand how the robot works. <br>
+    				<STRONG>Post Experiment Evaluation</STRONG>: I understand how the robot works. <br>
 					<INPUT TYPE="radio" NAME="q" VALUE="1"> Strongly Disagree <br>
 					<INPUT TYPE="radio" NAME="q" VALUE="2"> Disagree <br>
 					<INPUT TYPE="radio" NAME="q" VALUE="3"> Neutral   <br>
@@ -351,7 +504,7 @@ $(document).ready(function () {
 			case "2":
 			$("#questions").empty().append(
     				`
-    				<STRONG>Question</STRONG>: I understand how the robot works. <br>
+    				<STRONG>Post Experiment Evaluation</STRONG>: I understand how the robot works. <br>
 					<INPUT TYPE="radio" NAME="q" VALUE="1"> Strongly Disagree <br>
 					<INPUT TYPE="radio" NAME="q" VALUE="2"> Disagree <br>
 					<INPUT TYPE="radio" NAME="q" VALUE="3"> Neutral   <br>
@@ -367,7 +520,7 @@ $(document).ready(function () {
 			case "3":
 			$("#questions").empty().append(
     				`
-    				<STRONG>Question</STRONG>: I understand how the robot works. <br>
+    				<STRONG>Post Experiment Evaluation</STRONG>: I understand how the robot works. <br>
 					<INPUT TYPE="radio" NAME="q" VALUE="1"> Strongly Disagree <br>
 					<INPUT TYPE="radio" NAME="q" VALUE="2"> Disagree <br>
 					<INPUT TYPE="radio" NAME="q" VALUE="3"> Neutral   <br>
@@ -382,7 +535,7 @@ $(document).ready(function () {
 			case "4":
 			$("#questions").empty().append(
     				`
-    				<STRONG>Question</STRONG>: I understand how the robot works. <br>
+    				<STRONG>Post Experiment Evaluation</STRONG>: I understand how the robot works. <br>
 					<INPUT TYPE="radio" NAME="q" VALUE="1"> Strongly Disagree <br>
 					<INPUT TYPE="radio" NAME="q" VALUE="2"> Disagree <br>
 					<INPUT TYPE="radio" NAME="q" VALUE="3"> Neutral   <br>
@@ -397,7 +550,7 @@ $(document).ready(function () {
 			case "5":
 			$("#questions").empty().append(
     				`
-    				<STRONG>Question</STRONG>: I understand how the robot works. <br>
+    				<STRONG>Post Experiment Evaluation</STRONG>: I understand how the robot works. <br>
 					<INPUT TYPE="radio" NAME="q" VALUE="1"> Strongly Disagree <br>
 					<INPUT TYPE="radio" NAME="q" VALUE="2"> Disagree <br>
 					<INPUT TYPE="radio" NAME="q" VALUE="3"> Neutral   <br>
@@ -413,7 +566,7 @@ $(document).ready(function () {
 			case "6":
 			$("#questions").empty().append(
     				`
-    				<STRONG>Question</STRONG>: I understand how the robot works. <br>
+    				<STRONG>Post Experiment Evaluation</STRONG>: I understand how the robot works. <br>
 					<INPUT TYPE="radio" NAME="q" VALUE="1"> Strongly Disagree <br>
 					<INPUT TYPE="radio" NAME="q" VALUE="2"> Disagree <br>
 					<INPUT TYPE="radio" NAME="q" VALUE="3"> Neutral   <br>
@@ -428,7 +581,7 @@ $(document).ready(function () {
 			case "7":
 			$("#questions").empty().append(
     				`
-    				<STRONG>Question</STRONG>: I understand how the robot works. <br>
+    				<STRONG>Post Experiment Evaluation</STRONG>: I understand how the robot works. <br>
 					<INPUT TYPE="radio" NAME="q" VALUE="1"> Strongly Disagree <br>
 					<INPUT TYPE="radio" NAME="q" VALUE="2"> Disagree <br>
 					<INPUT TYPE="radio" NAME="q" VALUE="3"> Neutral   <br>
@@ -441,15 +594,13 @@ $(document).ready(function () {
 			break;
 
 
+
 		}
 
 	}
 
-
-	$("#show" ).click( function(event){
-		event.preventDefault();
-		
-		console.log(question);
+	function next(renderq= true)
+	{	
 		if(state < 3)
 		{
 			value = "";
@@ -463,11 +614,12 @@ $(document).ready(function () {
 				return; 
 			}
 
+			
 			if(question==1)
 				okSkip = 1;
 			// first choice
-			if(question != 1)
-			switch (state)
+			
+			switch (question)
 			{
 				
 				case 1:
@@ -477,6 +629,22 @@ $(document).ready(function () {
 				case 2:
 				ans2.push(value);
 				break;
+
+				case 3:
+				ans3.push(value);
+				break;
+
+				case 4:
+				ans4.push(value);
+				break;
+
+				case 5:
+				ans5.push(value);
+				break;
+
+				case 6:
+				ans6.push(value);
+				break;
 			
 			}
 			
@@ -485,7 +653,12 @@ $(document).ready(function () {
 		
 			if (question == 6)
 			{
-				renderVideo(state, value, question);
+				renderVideo(state, value);
+				
+				$("#qsubmit").empty();
+				$("#questions").empty();
+				$("#exp").empty();
+				
 				okSkip = 0;
 				state++;
 				if(exp)
@@ -493,22 +666,29 @@ $(document).ready(function () {
 				else
 					question = 2;
 
-			}
-			else if(question != 1 || (question == 1 && value == 3))
-				question++;
 
-			
-			if(state < 3)
-				renderQuestion(question);
-			else
-			{
-				question = 1;
-				endTime =  new Date();
-				timeDiff = endTime-startTime;
-				timeDiff /= 1000;
-				renderSurvey(question);
+				if(state == 3 )
+			  	{
+					question = 1;
+					endTime =  new Date();
+					timeDiff = endTime-startTime;
+					timeDiff /= 1000;
+					
+			  	}
+
+
+			  
+
 			}
-	
+			else if( (question != 1 || (question == 1 && value == 3)) ){
+				question++;
+				renderQuestion(state, question);
+			} else if (question == 1)
+			{
+				renderQuestion(state, question);
+			}
+
+
 
 		}
 		else
@@ -524,15 +704,15 @@ $(document).ready(function () {
 					return; 
 				}
 
-				ans3.push(value);
+				ans7.push(value);
 
 				question++;
 				renderSurvey(question);
 
-				if(question  == 8)
+				if(question  == 8 || (!exp && question == 3))
 				{
 					
-					ans = JSON.stringify({"ans" : [ans1, ans2, ans3], "explanation" : "{{explanation}}", "time" : timeDiff });
+					ans = JSON.stringify({"ans" : [ans1, ans2, ans3. ans4, ans5, ans6, ans7], "explanation" : "{{explanation}}", "time" : timeDiff });
 					
            			$.ajax({
                 	type: 'POST',
@@ -551,7 +731,12 @@ $(document).ready(function () {
             		});
 					}
 		}
-	});
+
+		$("#stage").empty().append("stage: "+ state);
+
+	}
+
+
 
 
 

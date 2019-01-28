@@ -25,13 +25,15 @@
   display: table;
 }
 
-body {
-background-image: url("/static/img/ipad.png");
-background-repeat: no-repeat;
-background-size: cover;
- }
+figure{
+   
+    text-align: center;
+}
 
- #bg{
-  padding-top: 200px;
+.vid {
 
- }
+    
+
+    text-align: center;
+}
+
