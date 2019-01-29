@@ -4,14 +4,11 @@ import numpy as np
 import random
 import copy
 import time
-import matplotlib
-import matplotlib.pyplot as plt
-import matplotlib.image as mpimg
+
 from pymongo import MongoClient
 import uuid
 import json
 
-from robot import robot
 
 app = Flask(__name__, static_url_path='/static')
 app.jinja_env.filters['zip'] = zip
