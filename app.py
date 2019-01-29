@@ -52,7 +52,7 @@ def legends(show=True):
 	img1 = ["ThingsInTheCabinet.png"]
 	cap1 = ["This is a cabinet which contains some objects: apple, carrots, mango, and orange. The location of the cabinet is marked on the pciture at the top "]
 
-	img2 = ["topdown_label.png"]
+	img2 = ["topdown_view_v1.png"]
 	cap2 = ["This is the top down view of the scene, and it marks your position and the position of various important objects."]	
 
 	return render_template("legends.html", images1 = img1, images2 = img2, cap1 = cap1, cap2 = cap2, show = show)
