@@ -55,7 +55,7 @@
 <script>
 
 $(document).ready(function () {
-	var state = 1;
+	var state = 0;
 	var question = 1;
 	var okSkip = 0;
 
@@ -66,7 +66,8 @@ $(document).ready(function () {
 	var ans4 = [];
 	var ans5 = [];
 	var ans6 = [];
-	var ans7 = [];	
+	var ans7 = [];
+	var preResult = [];	
 
 	if("{{explanation}}" == "True")
 		exp = true;
@@ -75,12 +76,12 @@ $(document).ready(function () {
 	
 	var startTime, endTime, timeDiff;
 
-	if(exp == false)
-		question = 2;
 
 	startTime = new Date();
-	renderVideo(0,0)
-	$("#stage").empty().append("stage: "+ state);
+	renderPreTest(1);
+	$("#qsubmit").empty().append("<button>submit</button>");
+
+	$("#stage").empty().append("stage: " + state);
 	
 	$("#video").on('click', '#vend', function () {
 		if(state == 3)
@@ -100,11 +101,57 @@ $(document).ready(function () {
 		
 	});
 
+	function renderPreTest(q)
+	{
+		switch(q.toString())
+		{
+			case "1":
+			$("#questions").empty().append(
+			`
+			<STRONG> What is your gender? </STRONG> <br> 
+			<INPUT TYPE="radio" NAME="q"  VALUE="1" > Female <br>  
+			<INPUT TYPE="radio" NAME="q" VALUE="2" > Male <br> 
+			<br> 
+			`
+			);
+
+
+			break;
+
+			case "2":
+			$("#questions").empty().append(
+			`
+			<STRONG> How old are you? </STRONG> <br> 
+			<INPUT TYPE="text" NAME="q" > 
+			<br> 
+			`
+			);
+
+
+			break;
+
+			case "3":
+			$("#questions").empty().append(
+			`
+			<STRONG> What is your major in college? </STRONG> <br> 
+			<INPUT TYPE="text" NAME="q" > 
+			<br> 
+			`
+			);
+
+
+			break;
+
+		}
+
+	}
+
     // parameters: state and value of the submitted response
 	function renderExplanation(s, v,q)
 	{
 		switch(s.toString()+v.toString()+q.toString()){
 			case "111" :
+				if (exp)
 				$("#exp").empty().append(
 				`	<h3> Explanation: </h3>
 					<STRONG>You asked: </STRONG> What are you going to do? <br>
@@ -128,12 +175,24 @@ $(document).ready(function () {
 					</div>
 				`
     			);
+				else
+				{
+					$("#exp").empty().append(
+				`	<h3> Explanation: </h3>
+					<STRONG>You asked: </STRONG> What are you going to do? <br>
+					<div class = "row col-md-offset-2">
+					No explanations.
+					</div>
+				`
+					);	
+				}
 				break;
 			case "121":
+			if (exp)
 			$("#exp").empty().append(
 				`	<h3> Explanation: </h3>
 					<STRONG>You asked: </STRONG>
-				 	Are you looking for something? <br> 
+				 	What's the problem? <br> 
 					<div class = "row col-md-offset-2">
 					  <figure>
 						<img src="static/img/orange.jpg"  height="100" width="100" />
@@ -142,10 +201,23 @@ $(document).ready(function () {
 					</div>
 				`
     			);
+			else
+			{
+				$("#exp").empty().append(
+				`	<h3> Explanation: </h3>
+					<STRONG>You asked: </STRONG>
+				 	What's the problem? <br> 
+					<div class = "row col-md-offset-2">
+					No explanations.
+					</div>
+				`
+    			);				
+			}
 
 			break;
 
 			case "211" :
+				if(exp)
 				$("#exp").empty().append(
 				`	<h3> Explanation: </h3>
 					<STRONG>You asked: </STRONG>
@@ -170,12 +242,26 @@ $(document).ready(function () {
 					</div>
 				`
     			);
+				else 
+				{
+				$("#exp").empty().append(
+				`	<h3> Explanation: </h3>
+					<STRONG>You asked: </STRONG>
+					What are you going to do? <br>
+					<div class = "row col-md-offset-2">
+					No explanations.
+					</div>
+					`);
+				}
+
 				break;
+
 			case "221":
+			if(exp)
 			$("#exp").empty().append(
 				`	<h3> Explanation: </h3>
 					<STRONG>You asked: </STRONG>
-					Are you looking for something? <br> 
+					What's the problem? <br> 
 					<div class = "row col-md-offset-2">
 					<div class="column2">
 					  <figure>
@@ -186,6 +272,18 @@ $(document).ready(function () {
 					</div>
 				`
     			);
+			else
+			{
+				$("#exp").empty().append(
+				`	<h3> Explanation: </h3>
+					<STRONG>You asked: </STRONG>
+					What's the problem? <br> 
+					<div class = "row col-md-offset-2">
+					No explanations.
+					</div>
+				`
+    			);				
+			}
 
 			break;			
 			default:
@@ -207,7 +305,7 @@ $(document).ready(function () {
 			`
 			<STRONG>You can ask the following questions to the robot </STRONG> <br>
 			<INPUT TYPE="radio" NAME="q" VALUE="1">What are you going to do? <br>
-			<INPUT TYPE="radio" NAME="q" VALUE="2"> Are you looking for something? <br> 
+			<INPUT TYPE="radio" NAME="q" VALUE="2"> What's the problem? <br> 
 			<INPUT TYPE="radio" NAME="q" VALUE="3"> I don't want to ask anything <br>
 			<br>
 			
@@ -219,7 +317,7 @@ $(document).ready(function () {
 			`
 			<STRONG>You can ask the following questions to the robot</STRONG> <br>
 			<INPUT TYPE="radio" NAME="q" VALUE="1">What are you going to do? <br>
-			<INPUT TYPE="radio" NAME="q" VALUE="2"> Are you looking for something? <br> 
+			<INPUT TYPE="radio" NAME="q" VALUE="2"> What's the problem? <br> 
 			<br>
 			
 			`
@@ -308,7 +406,7 @@ $(document).ready(function () {
 			`
 			<STRONG>You can ask the following questions to the robot </STRONG> <br>
 			<INPUT TYPE="radio" NAME="q" VALUE="1">What are you going to do? <br>
-			<INPUT TYPE="radio" NAME="q" VALUE="2"> Are you looking for something? <br> 
+			<INPUT TYPE="radio" NAME="q" VALUE="2"> What's the problem? <br> 
 			<INPUT TYPE="radio" NAME="q" VALUE="3"> I don't want to ask anything <br>
 			<br>
 			
@@ -320,7 +418,7 @@ $(document).ready(function () {
 			`
 			<STRONG>You can ask the following questions </STRONG> <br>
 			<INPUT TYPE="radio" NAME="q" VALUE="1">What are you going to do? <br>
-			<INPUT TYPE="radio" NAME="q" VALUE="2"> Are you looking for something? <br> 
+			<INPUT TYPE="radio" NAME="q" VALUE="2"> What's the problem?<br> 
 			<br>
 			
 			`
@@ -456,7 +554,7 @@ $(document).ready(function () {
 			$("#video").empty().append(
 			`
 			<iframe width="320" height="240"
-				src="https://www.youtube.com/embed/xZ3XJd1NhL?autoplay=1" allowfullscreen>
+				src="https://www.youtube.com/embed/xZ3XJd1NhL8?autoplay=1" allowfullscreen>
 			</iframe>
 			<button id ="vend"> I finished watching video </button>
 			`
@@ -600,10 +698,59 @@ $(document).ready(function () {
 
 	function next(renderq= true)
 	{	
-		if(state < 3)
+		if(state == 0)
+		{	
+
+			value = "";
+			$("#error").empty();
+
+			if(question == 1)
+			{
+				if ($("input[name=q]").is(':checked'))
+				{
+					value = $("input[name=q]:checked").val();
+				}
+				else{
+					$("#error").empty().append("Please complete the form before submit");
+					return; 
+				}
+			}
+			else
+			{
+			
+				
+				value = $("input[name=q]").val();
+				
+				if(value == "")
+				{
+					$("#error").empty().append("Please complete the form before submit");
+					return; 
+				}				
+			}
+
+
+			preResult.push(value);
+			question++;
+
+			if(question <= 3 )
+				renderPreTest(question);
+			else
+			{
+				state = 1;
+				renderVideo(0,0);
+				$("#questions").empty();
+				$("#qsubmit").empty();
+				question = 1;
+			}
+
+
+
+		}
+		else if(state < 3)
 		{
 			value = "";
 			$("#error").empty();
+
 			if ($("input[name=q]").is(':checked'))
 			{
 				value = $("input[name=q]:checked").val();
@@ -660,10 +807,9 @@ $(document).ready(function () {
 				
 				okSkip = 0;
 				state++;
-				if(exp)
-					question = 1;
-				else
-					question = 2;
+				
+				question = 1;
+				
 
 
 				if(state == 3 )
@@ -707,10 +853,10 @@ $(document).ready(function () {
 				ans7.push(value);
 
 				
-				if(question  == 7 || (!exp && question == 2))
+				if(question  == 7)
 				{
 					
-					ans = JSON.stringify({"ans" : [ans1, ans2, ans3, ans4, ans5, ans6, ans7], "explanation" : "{{explanation}}", "time" : timeDiff });
+					ans = JSON.stringify({"explanations":exp.toString(), "preResult": preResult,"ans" : [ans1, ans2, ans3, ans4, ans5, ans6, ans7], "explanation" : "{{explanation}}", "time" : timeDiff });
 					
            			$.ajax({
                 	type: 'POST',
