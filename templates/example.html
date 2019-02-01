@@ -45,9 +45,10 @@
 <br>
 <br>
 <div class = "text-center">
-	<form action="/hints" method="POST" target="_blank">
-		<input type="submit" value="Environment Configuration">
-	</form>
+	<button id = "ecb">show/hide Environment Configuration</button>
+</div>
+
+<div id="ec">
 </div>
 {% endblock %}
 
@@ -69,6 +70,9 @@ $(document).ready(function () {
 	var ans7 = [];
 	var preResult = [];	
 
+
+	var ecshow = false;
+
 	if("{{explanation}}" == "True")
 		exp = true;
 	else
@@ -79,10 +83,71 @@ $(document).ready(function () {
 
 	startTime = new Date();
 	renderPreTest(1);
+
+
 	$("#qsubmit").empty().append("<button>submit</button>");
 
 	$("#stage").empty().append("stage: " + state);
 	
+	$("#ecb").click(function(event)
+	{
+		 ecshow = !ecshow;
+
+		if(ecshow)
+		$("#ec").empty().append(`
+	<div class="text-center">
+	<h2> Environment Configuration </h2>
+	<p> Please pay attention that <font color="red"> Pior to the experiment the robot knows nothing about the environment and has <b>not</b> seen this video</font> </p>
+	<p> <font color="red">Please get familiar with the environment. Note that for visualization purposes, we open all the doors (that can be open) for you. They will be closed in the actual environment. You can watch the video below more than once.</font></p>
+	<p><font color="green"> Remember! You can always go back to this page during the Experiment. </font>   </p>
+	</div>
+
+
+	<div >
+	<div class="row">
+	{% for item, cap in images2|zip(cap2) %}
+	<div class="column1">
+		<figure>
+			<img src="static/img/{{item}}"  height="445" width="516"/>
+			<figcaption>{{cap}}</figcaption>
+		</figure>
+	</div>
+	{% endfor %}
+	</div>
+	</div>
+	<br>
+	<br>
+
+
+	<div >
+	<div class="row">
+	{% for item, cap in images1|zip(cap1) %}
+	<div class="column1">
+		<figure>
+			<img src="static/img/{{item}}"  height="225" width="393"/>
+			<figcaption>{{cap}}</figcaption>
+		</figure>
+	</div>
+	{% endfor %}
+	</div>
+	</div>
+	<br>
+	<br>
+
+	<div class = "row">
+			
+			<div class="col-md-5 vid column1">
+			<iframe width="720" height="480"
+				src="https://www.youtube.com/embed/6rABvIGKmfw" allowfullscreen>
+			</iframe>
+			</div>
+		
+	</div>
+		`);
+	else
+		$("#ec").empty();
+	});
+
 	$("#video").on('click', '#vend', function () {
 		if(state == 3)
 			renderSurvey(1);
@@ -181,7 +246,7 @@ $(document).ready(function () {
 				`	<h3> Explanation: </h3>
 					<STRONG>You asked: </STRONG> What are you going to do? <br>
 					<div class = "row col-md-offset-2">
-					No explanations.
+					The robot did not respond to your question.
 					</div>
 				`
 					);	
@@ -208,7 +273,7 @@ $(document).ready(function () {
 					<STRONG>You asked: </STRONG>
 				 	What's the problem? <br> 
 					<div class = "row col-md-offset-2">
-					No explanations.
+					The robot did not respond to your question.
 					</div>
 				`
     			);				
@@ -249,7 +314,7 @@ $(document).ready(function () {
 					<STRONG>You asked: </STRONG>
 					What are you going to do? <br>
 					<div class = "row col-md-offset-2">
-					No explanations.
+					The robot did not respond to your question.
 					</div>
 					`);
 				}
@@ -279,7 +344,7 @@ $(document).ready(function () {
 					<STRONG>You asked: </STRONG>
 					What's the problem? <br> 
 					<div class = "row col-md-offset-2">
-					No explanations.
+					The robot did not respond to your question.
 					</div>
 				`
     			);				
@@ -304,6 +369,7 @@ $(document).ready(function () {
 			$("#questions").empty().append(
 			`
 			<STRONG>You can ask the following questions to the robot </STRONG> <br>
+			<font color="green">(If you  want to proceed to the next part, you need to select option3) </font> <br>
 			<INPUT TYPE="radio" NAME="q" VALUE="1">What are you going to do? <br>
 			<INPUT TYPE="radio" NAME="q" VALUE="2"> What's the problem? <br> 
 			<INPUT TYPE="radio" NAME="q" VALUE="3"> I don't want to ask anything <br>
@@ -331,6 +397,7 @@ $(document).ready(function () {
 			  $("#questions").empty().append(
     				`
     				<STRONG>Question For You</STRONG>:In your opinion, what is the robot going to do?: <br>
+    				<font color="green">(If you  want to proceed to the next part, you need to select option3) </font>
 					<INPUT TYPE="radio" NAME="q" VALUE="1"> Use the juicer <br>
 					<INPUT TYPE="radio" NAME="q" VALUE="2"> Take the Knife <br>
 					<INPUT TYPE="radio" NAME="q" VALUE="3"> Take the Cup <br>
@@ -617,7 +684,7 @@ $(document).ready(function () {
 			case "3":
 			$("#questions").empty().append(
     				`
-    				<STRONG>Post Experiment Evaluation</STRONG>: I think the explanation system is not efficient for users to receive explanations. <br>
+    				<STRONG>Post Experiment Evaluation</STRONG>: I think the explanation system is <font color="red">not</font> efficient for users to receive explanations. <br>
 					<INPUT TYPE="radio" NAME="q" VALUE="1"> Strongly Disagree <br>
 					<INPUT TYPE="radio" NAME="q" VALUE="2"> Disagree <br>
 					<INPUT TYPE="radio" NAME="q" VALUE="3"> Neutral   <br>
@@ -663,7 +730,7 @@ $(document).ready(function () {
 			case "6":
 			$("#questions").empty().append(
     				`
-    				<STRONG>Post Experiment Evaluation</STRONG>: The explanations the robot gives are not satisfying. <br>
+    				<STRONG>Post Experiment Evaluation</STRONG>: The explanations the robot gives are <font color="red">not</font>  satisfying. <br>
 					<INPUT TYPE="radio" NAME="q" VALUE="1"> Strongly Disagree <br>
 					<INPUT TYPE="radio" NAME="q" VALUE="2"> Disagree <br>
 					<INPUT TYPE="radio" NAME="q" VALUE="3"> Neutral   <br>

@@ -61,16 +61,21 @@ def hints():
 
 @app.route('/example',  methods=['POST', 'GET'])
 def example():
-	global exp, noexp
-	explanation = True
-	if exp <= noexp:
+  global exp, noexp
+  explanation = True
+  if exp <= noexp:
 		explanation = True
 		exp += 1
-	else:
+  else:
 		explanation = False
 		noexp += 1
+  img1 = ["ThingsInTheCabinet.png"]
+  cap1 = ["This is a cabinet which contains some objects: apple, carrots, mango, and orange. The location of the cabinet is marked on the pciture at the top "]
 
-	return render_template("example.html", task = "Making Orange Juice", explanation = explanation)
+  img2 = ["topdown_view_v1.png"]
+  cap2 = ["This is the top down view of the scene, and it marks your position and the position of various important objects."]  
+
+  return render_template("example.html", task = "Making Orange Juice", explanation = explanation,images1 = img1, images2 = img2, cap1 = cap1, cap2 = cap2, show = False)
 
 @app.route('/result',  methods=['POST', 'GET'])
 def result():
