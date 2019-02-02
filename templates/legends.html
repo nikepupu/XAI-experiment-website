@@ -4,9 +4,9 @@
 {% block top %}
 <div class="text-center">
 	<h2> Environment Configuration </h2>
-	<p> Please pay attention that <font color="red"> Pior to the experiment the robot knows nothing about the environment and has <b>not</b> seen this video</font> </p>
-	<p> <font color="red">Please get familiar with the environment. Note that for visualization purposes, we open all the doors (that can be open) for you. They will be closed in the actual environment. You can watch the video below more than once.</font></p>
-	<p><font color="green"> Remember! You can always go back to this page during the Experiment. </font>   </p>
+	<p> Note: this information is for your benefit only. The robot knows nothing about the room at this point. </p>
+	<p> <font color="red">Please familiarize yourself with the environment. Note that in the pictures and the video below, the cabinet door is open for visualization purposes. It will be closed at the beginning of the experiment. You can watch the video below more than once.</font></p>
+	<p><font color="green"> You can always review information on this page during the experiment. </font>   </p>
 </div>
 {% endblock %}
 
@@ -64,7 +64,7 @@
 <div class = "row">
 	<div class="col-md-2 col-md-offset-5">
 	<form action="/example" method="POST">
- 		<input type="submit" value="I understand the meaning of each item and want to start the experiment">
+		<button type="submit" class="btn btn-primary btn-lg">I understand how the room is set up <br> and want to start the experiment</button>
 	</form>
 	</div>
 </div>
