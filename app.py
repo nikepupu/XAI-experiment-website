@@ -42,6 +42,10 @@ def new_experiment():
 @app.route('/',methods=['GET', 'POST'])
 def index():
   return render_template("intro.html")
+
+@app.route('/exam',methods=['GET', 'POST'])
+def exam():
+  return render_template("exam.html")
     
 @app.route('/start',methods=['POST', 'GET'])
 def legends(show=True):
@@ -76,6 +80,7 @@ def example():
   cap2 = ["This is the top down view of the scene, and it marks your position and the position of various important objects."]  
 
   return render_template("example.html", task = "Making Orange Juice", explanation = explanation,images1 = img1, images2 = img2, cap1 = cap1, cap2 = cap2, show = False)
+
 
 @app.route('/result',  methods=['POST', 'GET'])
 def result():

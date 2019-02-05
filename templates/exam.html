@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+
+{% block top %} 
+<div class="row">
+	<div class="col-md-2 col-md-offset-5">
+		<h1> Examples </h1>
+	</div>
+</div >
+<div  class="col-md-8 col-md-offset-2">
+
+
+	Example of questions you can ask and possible answers from the robot: <br>
+	What are you going to do? <br>
+	<div class = "row col-md-offset-5">
+		Robot's answer: <br>
+					<div class="column3">
+    				<figure>
+						<img src="static/img/hand_empty.png"  height="100" width="100"/>
+					</figure>
+					</div>
+
+					<div class = "column3">
+    				<figure>
+						<img src="static/img/arrow.jpg"  height="100" width="100"/>
+					</figure>
+					</div>
+					<div class="column3">
+					  <figure>
+						<img src="static/img/hand_carrot.png"  height="100" width="100"/>
+					</figure>
+					
+	</div>
+	<br>
+	<STRONG>This means that the robot is trying to take the carrot.</STRONG>
+
+</div>
+	
+	What's the problem?  <br>
+<div class = "row col-md-offset-5">
+	Robot's answer: <br>
+	<div class="column2">
+		<figure>
+			<img src="static/img/carrot.jpg"  height="100" width="100"/>
+			<img src="static/img/question-mark.jpg"  height="100" width="100"/>
+		</figure>
+		<br>
+		<STRONG>This means that the robot cannot find the carrot</STRONG>.
+	</div>
+
+</div>
+</div>
+{%  endblock %}
+
+{% block bot %}
+<div class="col-md-2 col-md-offset-5">
+	<form action="/start", method="POST">
+ 		<input type="submit" value="I understand and want to start the experiment">
+	</form>
+</div>
+
+{% block script %} 
+{% endblock %}
+{% endblock %}
