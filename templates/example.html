@@ -18,10 +18,12 @@
 	</div>
 </div>
 
-
- 	<div id="exp">
- 	
+	<div id = "exp">
+		<div id = "expTitle"> </div>
+ 		<div id="exp1"> </div>
+	 	<div id="exp2"> </div>
 	</div>
+
 </div>
 
 {% endblock %}
@@ -97,7 +99,7 @@ $(document).ready(function () {
 		$("#ec").empty().append(`
 	<div class="text-center">
 	<h2> Environment Configuration </h2>
-	<p> “Remember, the robot only knows about what it has seen in the video clips above. It knew nothing about the room before the experiment began. </p>
+	<p> “Remember, the robot only knows about what it has seen in the video clips above. </p>
 	<p> <font color="red">Please familiarize yourself with the environment. Note that in the pictures and the video below, the cabinet door is open for visualization purposes. It will be closed at the beginning of the experiment. You can watch the video below more than once.</font></p>
 	<p><font color="green"> Remember! You can always go back to this page during the Experiment. </font>   </p>
 	</div>
@@ -217,11 +219,12 @@ $(document).ready(function () {
     // parameters: state and value of the submitted response
 	function renderExplanation(s, v,q)
 	{
+		console.log(s.toString()+v.toString()+q.toString());
 		switch(s.toString()+v.toString()+q.toString()){
 			case "111" :
 				if (exp)
-				$("#exp").empty().append(
-				`	<h3> Robot’s answer: </h3>
+				$("#exp1").empty().append(
+				`	
 					<STRONG>You asked: </STRONG> What are you going to do? <br>
 					<div class = "row col-md-offset-2">
 					<div class="column3">
@@ -245,8 +248,8 @@ $(document).ready(function () {
     			);
 				else
 				{
-					$("#exp").empty().append(
-				`	<h3> Robot’s answer: </h3>
+					$("#exp1").empty().append(
+				`	
 					<STRONG>You asked: </STRONG> What are you going to do? <br>
 					<div class = "row col-md-offset-2">
 					The robot did not respond to your question.
@@ -254,11 +257,13 @@ $(document).ready(function () {
 				`
 					);	
 				}
+
+				$("#expTitle").empty().append("<h3> Robot’s answer: </h3>");
 				break;
 			case "121":
 			if (exp)
-			$("#exp").empty().append(
-				`	<h3> Robot’s answer: </h3>
+			$("#exp2").empty().append(
+				`	
 					<STRONG>You asked: </STRONG>
 				 	What's the problem? <br> 
 					<div class = "row col-md-offset-2">
@@ -271,9 +276,8 @@ $(document).ready(function () {
     			);
 			else
 			{
-				$("#exp").empty().append(
-				`	<h3> Robot’s answer: </h3>
-					<STRONG>You asked: </STRONG>
+				$("#exp2").empty().append(
+				`	<STRONG>You asked: </STRONG>
 				 	What's the problem? <br> 
 					<div class = "row col-md-offset-2">
 					The robot did not respond to your question.
@@ -281,13 +285,15 @@ $(document).ready(function () {
 				`
     			);				
 			}
+			$("#expTitle").empty().append("<h3> Robot’s answer: </h3>");
 
 			break;
 
 			case "211" :
+			console.log("hi");
 				if(exp)
-				$("#exp").empty().append(
-				`	<h3> Robot’s answer: </h3>
+				$("#exp1").empty().append(
+				`	
 					<STRONG>You asked: </STRONG>
 					What are you going to do? <br>
 					<div class = "row col-md-offset-2">
@@ -312,8 +318,8 @@ $(document).ready(function () {
     			);
 				else 
 				{
-				$("#exp").empty().append(
-				`	<h3> Robot’s answer: </h3>
+					$("#exp1").empty().append(
+					`	
 					<STRONG>You asked: </STRONG>
 					What are you going to do? <br>
 					<div class = "row col-md-offset-2">
@@ -321,14 +327,14 @@ $(document).ready(function () {
 					</div>
 					`);
 				}
-
+				$("#expTitle").empty().append("<h3> Robot’s answer: </h3>");
 				break;
 
 			case "221":
+			console.log("hello");
 			if(exp)
-			$("#exp").empty().append(
-				`	<h3> Robot’s answer: </h3>
-					<STRONG>You asked: </STRONG>
+			$("#exp2").empty().append(
+				`	<STRONG>You asked: </STRONG>
 					What's the problem? <br> 
 					<div class = "row col-md-offset-2">
 					<div class="column2">
@@ -342,9 +348,8 @@ $(document).ready(function () {
     			);
 			else
 			{
-				$("#exp").empty().append(
-				`	<h3> Robot’s answer: </h3>
-					<STRONG>You asked: </STRONG>
+				$("#exp2").empty().append(
+				`	<STRONG>You asked: </STRONG>
 					What's the problem? <br> 
 					<div class = "row col-md-offset-2">
 					The robot did not respond to your question.
@@ -352,7 +357,7 @@ $(document).ready(function () {
 				`
     			);				
 			}
-
+			$("#expTitle").empty().append("<h3> Robot’s answer: </h3>");
 			break;			
 			default:
 			break
@@ -884,7 +889,10 @@ $(document).ready(function () {
 				
 				$("#qsubmit").empty();
 				$("#questions").empty();
-				$("#exp").empty();
+				$("#expTitle").empty();
+				$("#exp1").empty();
+				$("#exp2").empty();
+				
 				
 				okSkip = 0;
 				state++;
@@ -895,7 +903,6 @@ $(document).ready(function () {
 
 				if(state == 3 )
 			  	{
-					question = 1;
 					endTime =  new Date();
 					timeDiff = endTime-startTime;
 					timeDiff /= 1000;
